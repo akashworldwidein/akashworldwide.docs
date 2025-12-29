@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDF to JPG | akashworldwide.docs</title>
+
+  <!-- PDF.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: #020617;
+      border: 1px solid #1e293b;
+      padding: 30px;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 440px;
+      text-align: center;
+    }
+
+    h1 { color: #38bdf8; margin-bottom: 8px; }
+    p { color: #cbd5f5; font-size: 0.95rem; margin-bottom: 20px; }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      background: #020617;
+      border: 1px dashed #38bdf8;
+      border-radius: 10px;
+      color: #cbd5f5;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #38bdf8;
+      color: #020617;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover { background: #0ea5e9; }
+
+    .images img {
+      width: 100%;
+      margin-top: 15px;
+      border-radius: 8px;
+      border: 1px solid #1e293b;
+    }
+
+    footer {
+      margin-top: 18px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>PDF to JPG</h1>
+    <p>Convert each page of a PDF into JPG images.</p>
+
+    <input type="file" id="pdfFile" accept="application/pdf" />
+
+    <button onclick="convertPDF()">Convert</button>
+
+    <div class="images" id="output"></div>
+
+    <footer>Developed by <strong>akashworldwide</strong></footer>
+  </div>
+
+  <script>
+    const pdfjsLib = window['pdfjs-dist/build/pdf'];
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    async function convertPDF() {
+      const fileInput = document.getElementById('pdfFile');
+      const output = document.getElementById('output');
+      output.innerHTML = '';
+
+      if (!fileInput.files.length) {
+        alert('Please select a PDF file.');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+
+      for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 2 });
+
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        await page.render({ canvasContext: context, viewport }).promise;
+
+        const img = document.createElement('img');
+        img.src = canvas.toDataURL('image/jpeg', 1.0);
+        output.appendChild(img);
+      }
+    }
+  </script>
+</body>
+</html>
