@@ -11,77 +11,100 @@
 <style>
 :root{
   --bg:#05070d;
+  --bg2:#0b1220;
   --card:#0e1526;
-  --neon:#00eaff;
+  --neon:#00f5ff;
   --text:#e5e7eb;
   --muted:#9ca3af;
 }
+
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif}
+
 body{
-  background:radial-gradient(circle at top,#0b1220,var(--bg));
+  background:radial-gradient(circle at top,var(--bg2),var(--bg));
   color:var(--text);
 }
+
+/* HEADER FIXED */
 header{
   text-align:center;
-  padding:20px;
-  border-bottom:1px solid rgba(0,234,255,.25)
+  padding:22px 15px;
+  background:linear-gradient(180deg,rgba(5,10,20,.95),rgba(5,10,20,.85));
+  border-bottom:2px solid rgba(0,245,255,.6);
 }
 header h1{
-  color:var(--neon);
+  font-size:clamp(1.4rem,5vw,2.2rem);
   letter-spacing:2px;
-  text-shadow:0 0 15px rgba(0,234,255,.8)
+  color:var(--neon);
+  text-shadow:
+    0 0 6px rgba(0,245,255,.8),
+    0 0 14px rgba(0,245,255,.6),
+    0 0 28px rgba(0,245,255,.4);
 }
+
+/* TOOL GRID */
 .tools{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:20px;
-  padding:40px;
-  max-width:1100px;
-  margin:auto
+  gap:22px;
+  padding:40px 20px;
+  max-width:1200px;
+  margin:auto;
 }
+
 .card{
   background:linear-gradient(180deg,#0e1526,#0a1020);
-  border:1px solid rgba(0,234,255,.3);
+  border:1px solid rgba(0,245,255,.3);
   padding:20px;
   transition:.3s;
 }
-.card:hover{transform:translateY(-5px);box-shadow:0 0 25px rgba(0,234,255,.3)}
-.card h3{color:var(--neon);margin-bottom:8px}
-.card p{font-size:.75rem;color:var(--muted);margin-bottom:15px}
+.card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 0 25px rgba(0,245,255,.3);
+}
+.card h3{color:var(--neon);margin-bottom:8px;font-size:.95rem}
+.card p{font-size:.72rem;color:var(--muted);margin-bottom:14px}
 .card button{
   width:100%;
   padding:10px;
   background:transparent;
   border:1px solid var(--neon);
   color:#fff;
-  cursor:pointer
+  cursor:pointer;
 }
 .card button:hover{background:var(--neon);color:#000}
 
+/* TOOL AREA */
 .tool-box{
   display:none;
-  max-width:600px;
-  margin:40px auto;
+  max-width:650px;
+  margin:30px auto;
   padding:30px;
   background:var(--card);
-  border:1px solid rgba(0,234,255,.3)
+  border:1px solid rgba(0,245,255,.3);
 }
-.tool-box h2{color:var(--neon);text-align:center;margin-bottom:15px}
+.tool-box h2{
+  text-align:center;
+  color:var(--neon);
+  margin-bottom:15px;
+}
 .tool-box input, .tool-box button{
   width:100%;
   margin-top:12px;
   padding:10px;
   background:transparent;
   border:1px solid var(--neon);
-  color:#fff
+  color:#fff;
 }
 
+/* FOOTER */
 footer{
+  margin-top:50px;
   text-align:center;
-  padding:20px;
+  padding:22px;
   font-size:.7rem;
   color:var(--muted);
-  border-top:1px solid rgba(139,92,246,.3)
+  border-top:1px solid rgba(139,92,246,.3);
 }
 footer span{color:var(--neon)}
 </style>
@@ -97,29 +120,23 @@ footer span{color:var(--neon)}
   <div class="card"><h3>Compress PDF</h3><p>Reduce PDF size</p><button onclick="openTool('compress')">OPEN</button></div>
   <div class="card"><h3>Merge PDF</h3><p>Combine PDFs</p><button onclick="openTool('merge')">OPEN</button></div>
   <div class="card"><h3>Split PDF</h3><p>Split pages</p><button onclick="openTool('split')">OPEN</button></div>
+  <div class="card"><h3>Delete Pages</h3><p>Remove pages</p><button onclick="openTool('delete')">OPEN</button></div>
+  <div class="card"><h3>Reorder Pages</h3><p>Change page order</p><button onclick="openTool('reorder')">OPEN</button></div>
+  <div class="card"><h3>Protect PDF</h3><p>Add password</p><button onclick="openTool('protect')">OPEN</button></div>
+  <div class="card"><h3>Unlock PDF</h3><p>Remove password</p><button onclick="openTool('unlock')">OPEN</button></div>
+  <div class="card"><h3>Watermark PDF</h3><p>Add watermark</p><button onclick="openTool('watermark')">OPEN</button></div>
   <div class="card"><h3>PDF to JPG</h3><p>Convert pages</p><button onclick="openTool('pdfjpg')">OPEN</button></div>
   <div class="card"><h3>JPG to PDF</h3><p>Images to PDF</p><button onclick="openTool('jpgpdf')">OPEN</button></div>
+  <div class="card"><h3>PDF to Text</h3><p>Extract text</p><button onclick="openTool('pdftxt')">OPEN</button></div>
+  <div class="card"><h3>Text to PDF</h3><p>Text into PDF</p><button onclick="openTool('txtpdf')">OPEN</button></div>
+  <div class="card"><h3>PDF Metadata</h3><p>Edit metadata</p><button onclick="openTool('meta')">OPEN</button></div>
 </section>
 
-<!-- COMPRESS -->
+<!-- SAMPLE TOOL BOX -->
 <div id="compress" class="tool-box">
   <h2>Compress PDF</h2>
-  <input type="file" id="compressFile" accept="application/pdf">
-  <button onclick="compressPDF()">COMPRESS & DOWNLOAD</button>
-</div>
-
-<!-- MERGE -->
-<div id="merge" class="tool-box">
-  <h2>Merge PDF</h2>
-  <input type="file" multiple accept="application/pdf">
-  <button>MERGE (demo)</button>
-</div>
-
-<!-- SPLIT -->
-<div id="split" class="tool-box">
-  <h2>Split PDF</h2>
   <input type="file" accept="application/pdf">
-  <button>SPLIT (demo)</button>
+  <button>COMPRESS & DOWNLOAD</button>
 </div>
 
 <footer>
@@ -130,21 +147,11 @@ footer span{color:var(--neon)}
 <script>
 function openTool(id){
   document.querySelectorAll('.tool-box').forEach(t=>t.style.display='none');
-  document.getElementById(id).style.display='block';
-  window.scrollTo({top:document.getElementById(id).offsetTop-20,behavior:'smooth'});
-}
-
-async function compressPDF(){
-  const f=document.getElementById("compressFile").files[0];
-  if(!f)return alert("Select PDF");
-  const b=await f.arrayBuffer();
-  const pdf=await PDFLib.PDFDocument.load(b);
-  const out=await pdf.save({useObjectStreams:true});
-  const blob=new Blob([out],{type:"application/pdf"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="compressed.pdf";
-  a.click();
+  const el=document.getElementById(id);
+  if(el){
+    el.style.display='block';
+    window.scrollTo({top:el.offsetTop-20,behavior:'smooth'});
+  }
 }
 </script>
 
