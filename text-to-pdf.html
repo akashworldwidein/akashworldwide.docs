@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Text to PDF | akashworldwide.docs</title>
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<style>
+body{background:#050914;color:#e6f1ff;font-family:Poppins,sans-serif;
+display:flex;justify-content:center;align-items:center;min-height:100vh}
+.card{background:#0b1226;border:1px solid #1c2a4a;border-radius:16px;
+padding:22px;width:100%;max-width:520px}
+textarea,button{width:100%;margin-top:10px}
+button{padding:10px;background:#4fc3f7;border:none;font-weight:600}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>Text to PDF</h2>
+<textarea id="text" rows="10" placeholder="Write text here"></textarea>
+<button onclick="make()">Create PDF</button>
+</div>
+
+<script>
+async function make(){
+ const pdf=await PDFLib.PDFDocument.create();
+ const page=pdf.addPage([595,842]);
+ page.drawText(text.value,{x:40,y:800,size:12,maxWidth:500});
+ const out=await pdf.save();
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([out],{type:"application/pdf"}));
+ a.download="text.pdf";a.click();
+}
+</script>
+</body>
+</html>
