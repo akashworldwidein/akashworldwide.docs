@@ -5,18 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Merge PDF | akashworldwide.docs</title>
 
-  <!-- pdf-lib -->
-  <script src="../lib/pdf-lib.min.js"></script>
+  <!-- pdf-lib CDN -->
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
     body {
+      margin: 0;
+      min-height: 100vh;
       background: #0f172a;
       color: #e5e7eb;
-      font-family: Arial, Helvetica, sans-serif;
-      min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
     }
 
     .container {
@@ -24,30 +29,31 @@
       border: 1px solid #1e293b;
       padding: 30px;
       border-radius: 14px;
-      max-width: 420px;
       width: 100%;
+      max-width: 420px;
       text-align: center;
     }
 
     h1 {
       color: #38bdf8;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     p {
-      font-size: 0.95rem;
       color: #cbd5f5;
+      font-size: 0.95rem;
       margin-bottom: 20px;
     }
 
     input[type="file"] {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       background: #020617;
-      border: 1px solid #1e293b;
+      border: 1px dashed #38bdf8;
+      border-radius: 10px;
       color: #cbd5f5;
-      border-radius: 8px;
       margin-bottom: 20px;
+      cursor: pointer;
     }
 
     button {
@@ -56,10 +62,11 @@
       background: #38bdf8;
       color: #020617;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 1rem;
-      cursor: pointer;
       font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
     }
 
     button:hover {
@@ -67,12 +74,13 @@
     }
 
     footer {
-      margin-top: 20px;
+      margin-top: 18px;
       font-size: 0.85rem;
       color: #94a3b8;
     }
   </style>
 </head>
+
 <body>
 
   <div class="container">
@@ -84,23 +92,23 @@
     <button onclick="mergePDFs()">Merge & Download</button>
 
     <footer>
-      Developed by akashworldwide
+      Developed by <strong>akashworldwide</strong>
     </footer>
   </div>
 
   <script>
     async function mergePDFs() {
-      const filesInput = document.getElementById("pdfFiles");
-      const files = filesInput.files;
+      const input = document.getElementById("pdfFiles");
+      const files = input.files;
 
-      if (!files.length) {
-        alert("Please select at least one PDF file.");
+      if (!files || files.length < 2) {
+        alert("Please select at least two PDF files.");
         return;
       }
 
       const mergedPdf = await PDFLib.PDFDocument.create();
 
-      for (const file of files) {
+      for (let file of files) {
         const arrayBuffer = await file.arrayBuffer();
         const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
         const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
@@ -111,12 +119,13 @@
       const blob = new Blob([mergedPdfBytes], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
 
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "merged.pdf";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "merged.pdf";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
       URL.revokeObjectURL(url);
     }
   </script>
