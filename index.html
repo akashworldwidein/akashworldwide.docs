@@ -22,9 +22,30 @@
   box-sizing:border-box;
   font-family:Poppins,sans-serif;
 }
+
+/* ---------- BACKGROUND ---------- */
+.bg-animate{
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  background:linear-gradient(120deg,#050914,#0c1a3a,#050914);
+  overflow:hidden;
+}
+.float-text{
+  position:absolute;
+  color:rgba(79,195,247,.12);
+  white-space:nowrap;
+  font-size:14px;
+  animation:floatUp linear infinite;
+}
+@keyframes floatUp{
+  from{transform:translateY(110vh)}
+  to{transform:translateY(-120vh)}
+}
+
+/* ---------- BODY ---------- */
 body{
   min-height:100vh;
-  background:radial-gradient(circle at top,#0c1a3a,#050914 65%);
   color:var(--text);
 }
 
@@ -41,8 +62,7 @@ header h1{
 header p{
   margin-top:14px;
   max-width:760px;
-  margin-left:auto;
-  margin-right:auto;
+  margin-inline:auto;
   font-size:.95rem;
   color:var(--muted);
   line-height:1.6;
@@ -92,10 +112,7 @@ header p{
   color:var(--muted);
   font-size:.88rem;
 }
-a{
-  text-decoration:none;
-  color:inherit;
-}
+a{text-decoration:none;color:inherit}
 
 /* ---------- FOOTER ---------- */
 footer{
@@ -119,20 +136,18 @@ footer a{
   color:#9bb0d3;
   font-size:.8rem;
 }
-.github img{
-  width:16px;
-  height:16px;
-}
+.github img{width:16px;height:16px}
 </style>
 </head>
 
 <body>
 
+<!-- Animated Background -->
+<div class="bg-animate" id="bg"></div>
+
 <header>
   <h1>akashworldwide.docs</h1>
-  <p>
-    Free • Fast • Privacy-first document tools with bank-level security
-  </p>
+  <p>Free • Fast • Privacy-first document tools with bank-level security</p>
 </header>
 
 <div class="notice">
@@ -142,38 +157,51 @@ footer a{
 
 <section class="grid">
 
-<!-- CORE PDF -->
 <a href="merge-pdf.html"><div class="card"><h3>Merge PDF</h3><p>Combine multiple PDFs into one</p></div></a>
 <a href="split-pdf.html"><div class="card"><h3>Split PDF</h3><p>Split PDF into individual pages</p></div></a>
 <a href="compress-pdf.html"><div class="card"><h3>Compress PDF</h3><p>Reduce PDF file size</p></div></a>
 <a href="reorder-pdf.html"><div class="card"><h3>Reorder PDF</h3><p>Change PDF page order</p></div></a>
 <a href="delete-pdf-pages.html"><div class="card"><h3>Delete PDF Pages</h3><p>Remove unwanted pages</p></div></a>
 
-<!-- CONVERT -->
 <a href="pdf-to-jpg.html"><div class="card"><h3>PDF to JPG</h3><p>Convert PDF pages to images</p></div></a>
 <a href="jpg-to-pdf.html"><div class="card"><h3>JPG to PDF</h3><p>Convert images into a PDF</p></div></a>
 <a href="pdf-to-text.html"><div class="card"><h3>PDF to Text</h3><p>Extract text from PDF</p></div></a>
 <a href="text-to-pdf.html"><div class="card"><h3>Text to PDF</h3><p>Create PDF from text</p></div></a>
 
-<!-- SECURITY & EDIT -->
 <a href="protect-pdf.html"><div class="card"><h3>Protect PDF</h3><p>Add password protection</p></div></a>
 <a href="unlock-pdf.html"><div class="card"><h3>Unlock PDF</h3><p>Remove PDF password</p></div></a>
 <a href="watermark-pdf.html"><div class="card"><h3>PDF Watermark</h3><p>Add text watermark</p></div></a>
-<a href="pdf-metadata.html"><div class="card"><h3>PDF Metadata Editor</h3><p>Edit title, author & info</p></div></a>
+<a href="pdf-metadata.html"><div class="card"><h3>PDF Metadata Editor</h3><p>Edit PDF information</p></div></a>
 
 </section>
 
 <footer>
   Developed by
-  <a href="https://www.akashworldwide.in" target="_blank" rel="noopener">
-    akashworldwide
-  </a>
+  <a href="https://www.akashworldwide.in" target="_blank">akashworldwide</a>
 
   <div class="github">
     <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
     Powered by GitHub
   </div>
 </footer>
+
+<!-- Floating Text Script -->
+<script>
+const words=[
+ "PDF","SECURE","CLIENT-SIDE","ENCRYPTED","MERGE","SPLIT",
+ "CONVERT","PRIVACY","TEXT","METADATA","WATERMARK","DOCS"
+];
+const bg=document.getElementById("bg");
+for(let i=0;i<30;i++){
+ const s=document.createElement("span");
+ s.className="float-text";
+ s.textContent=words[Math.floor(Math.random()*words.length)];
+ s.style.left=Math.random()*100+"%";
+ s.style.animationDuration=(18+Math.random()*20)+"s";
+ s.style.fontSize=(12+Math.random()*10)+"px";
+ bg.appendChild(s);
+}
+</script>
 
 </body>
 </html>
