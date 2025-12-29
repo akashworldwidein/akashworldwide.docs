@@ -1,134 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Merge PDF | akashworldwide.docs</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merge PDF | akashworldwide.docs</title>
 
-  <!-- pdf-lib CDN -->
-  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+<style>
+:root{
+  --bg:#050914;
+  --card:#0b1226;
+  --border:#1c2a4a;
+  --accent:#4fc3f7;
+  --accent-soft:rgba(79,195,247,.15);
+  --text:#e6f1ff;
+  --muted:#9bb0d3;
+}
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      background: #0f172a;
-      color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 
-    .container {
-      background: #020617;
-      border: 1px solid #1e293b;
-      padding: 30px;
-      border-radius: 14px;
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
-    }
+body{
+  min-height:100vh;
+  background:radial-gradient(circle at top,#0c1a3a,#050914 60%);
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-    h1 {
-      color: #38bdf8;
-      margin-bottom: 8px;
-    }
+.container{
+  width:100%;
+  max-width:460px;
+  margin:20px;
+}
 
-    p {
-      color: #cbd5f5;
-      font-size: 0.95rem;
-      margin-bottom: 20px;
-    }
+.card{
+  background:linear-gradient(180deg,#0d1738,#090f26);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:30px 26px;
+  text-align:center;
+}
 
-    input[type="file"] {
-      width: 100%;
-      padding: 12px;
-      background: #020617;
-      border: 1px dashed #38bdf8;
-      border-radius: 10px;
-      color: #cbd5f5;
-      margin-bottom: 20px;
-      cursor: pointer;
-    }
+a{
+  color:var(--accent);
+  text-decoration:none;
+  font-size:.85rem;
+}
 
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #38bdf8;
-      color: #020617;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.3s;
-    }
+h1{
+  margin-top:10px;
+  font-size:1.4rem;
+  color:var(--accent);
+}
 
-    button:hover {
-      background: #0ea5e9;
-    }
+p{
+  margin:10px 0 18px;
+  font-size:.9rem;
+  color:var(--muted);
+}
 
-    footer {
-      margin-top: 18px;
-      font-size: 0.85rem;
-      color: #94a3b8;
-    }
-  </style>
+.file-box{
+  margin-bottom:14px;
+}
+
+input[type=file]{
+  width:100%;
+  padding:12px;
+  border-radius:12px;
+  background:#020617;
+  border:1px dashed var(--accent);
+  color:var(--text);
+  cursor:pointer;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:14px;
+  border-radius:12px;
+  border:none;
+  background:var(--accent);
+  color:#020617;
+  font-weight:600;
+  cursor:pointer;
+  transition:.25s;
+}
+
+button:hover{background:#6fd3ff}
+
+button.secondary{
+  background:#1c2a4a;
+  color:var(--text);
+}
+
+.loader{
+  display:none;
+  margin:16px auto;
+  width:40px;
+  height:40px;
+  border:4px solid #1c2a4a;
+  border-top:4px solid var(--accent);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+footer{
+  margin-top:18px;
+  font-size:.8rem;
+  color:#7fa1d6;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="container">
-    <h1>Merge PDF</h1>
-    <p>Select multiple PDF files and merge them into one.</p>
+<div class="container">
+<div class="card">
 
-    <input type="file" id="pdfFiles" accept="application/pdf" multiple />
+<a href="index.html">← Back to Home</a>
 
-    <button onclick="mergePDFs()">Merge & Download</button>
+<h1>Merge PDF</h1>
+<p>Select multiple PDF files and merge them into one.</p>
 
-    <footer>
-      Developed by <strong>akashworldwide</strong>
-    </footer>
-  </div>
+<div class="file-box">
+  <input type="file" id="file1" accept="application/pdf">
+</div>
 
-  <script>
-    async function mergePDFs() {
-      const input = document.getElementById("pdfFiles");
-      const files = input.files;
+<div class="file-box">
+  <input type="file" id="file2" accept="application/pdf">
+</div>
 
-      if (!files || files.length < 2) {
-        alert("Please select at least two PDF files.");
-        return;
-      }
+<div class="file-box">
+  <input type="file" id="moreFiles" accept="application/pdf" multiple>
+</div>
 
-      const mergedPdf = await PDFLib.PDFDocument.create();
+<button onclick="mergePDF()">Merge PDFs</button>
 
-      for (let file of files) {
-        const arrayBuffer = await file.arrayBuffer();
-        const pdf = await PDFLib.PDFDocument.load(arrayBuffer);
-        const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-        pages.forEach(page => mergedPdf.addPage(page));
-      }
+<div class="loader" id="loader"></div>
 
-      const mergedPdfBytes = await mergedPdf.save();
-      const blob = new Blob([mergedPdfBytes], { type: "application/pdf" });
-      const url = URL.createObjectURL(blob);
+<button class="secondary" id="downloadBtn" style="display:none">Download Merged PDF</button>
 
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "merged.pdf";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+<footer>
+Developed by <strong>akashworldwide</strong>
+</footer>
 
-      URL.revokeObjectURL(url);
-    }
-  </script>
+</div>
+</div>
+
+<script>
+let mergedBlob = null;
+
+async function mergePDF(){
+  const f1 = document.getElementById("file1").files[0];
+  const f2 = document.getElementById("file2").files[0];
+  const more = document.getElementById("moreFiles").files;
+
+  if(!f1 || !f2){
+    alert("Please select at least two PDF files.");
+    return;
+  }
+
+  document.getElementById("loader").style.display = "block";
+
+  const mergedPdf = await PDFLib.PDFDocument.create();
+
+  const allFiles = [f1, f2, ...more];
+
+  for(const file of allFiles){
+    const pdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
+    const pages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+    pages.forEach(p => mergedPdf.addPage(p));
+  }
+
+  const bytes = await mergedPdf.save();
+  mergedBlob = new Blob([bytes], { type: "application/pdf" });
+
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("downloadBtn").style.display = "block";
+}
+
+document.getElementById("downloadBtn").onclick = () => {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(mergedBlob);
+  a.download = "merged.pdf";
+  a.click();
+};
+</script>
 
 </body>
 </html>
