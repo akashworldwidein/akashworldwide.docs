@@ -2,16 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>PDF Tools | akashworldwide</title>
+  <title>akashworldwide.docs | PDF Tools</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Google Font (Tech / Sci-Fi feel) -->
+  <!-- Futuristic Font -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #070b14;
-      --card: #0e1526;
+      --bg-dark: #05070d;
+      --bg-light: #0b1220;
+      --card-bg: #0e1526;
       --neon-blue: #00eaff;
       --neon-purple: #8b5cf6;
       --text: #e5e7eb;
@@ -26,41 +27,24 @@
     }
 
     body {
-      background: radial-gradient(circle at top, #0b1220, #05070d);
+      background: radial-gradient(circle at top, var(--bg-light), var(--bg-dark));
       color: var(--text);
       min-height: 100vh;
     }
 
     /* ---------- HEADER ---------- */
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 18px 20px;
-      border-bottom: 1px solid rgba(0,234,255,0.2);
-      backdrop-filter: blur(8px);
+      text-align: center;
+      padding: 20px;
+      border-bottom: 1px solid rgba(0,234,255,0.25);
+      backdrop-filter: blur(6px);
     }
 
     header h1 {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       letter-spacing: 2px;
       color: var(--neon-blue);
-      text-shadow: 0 0 12px rgba(0,234,255,0.6);
-    }
-
-    header a {
-      color: #fff;
-      text-decoration: none;
-      padding: 8px 14px;
-      border: 1px solid var(--neon-purple);
-      border-radius: 6px;
-      font-size: 0.75rem;
-      transition: 0.3s;
-    }
-
-    header a:hover {
-      background: var(--neon-purple);
-      box-shadow: 0 0 15px rgba(139,92,246,0.8);
+      text-shadow: 0 0 15px rgba(0,234,255,0.8);
     }
 
     /* ---------- HERO ---------- */
@@ -70,17 +54,18 @@
     }
 
     .hero h2 {
-      font-size: 1.8rem;
+      font-size: 1.9rem;
       color: #fff;
-      text-shadow: 0 0 18px rgba(0,234,255,0.5);
+      text-shadow: 0 0 20px rgba(0,234,255,0.6);
     }
 
     .hero p {
       margin-top: 12px;
-      color: var(--muted);
       font-size: 0.85rem;
-      max-width: 600px;
+      color: var(--muted);
+      max-width: 650px;
       margin-inline: auto;
+      line-height: 1.6;
     }
 
     /* ---------- TOOLS GRID ---------- */
@@ -96,8 +81,8 @@
     .card {
       background: linear-gradient(180deg, #0e1526, #0a1020);
       border: 1px solid rgba(0,234,255,0.25);
-      clip-path: polygon(0 0, 92% 0, 100% 12%, 100% 100%, 8% 100%, 0 88%);
       padding: 22px;
+      clip-path: polygon(0 0, 92% 0, 100% 12%, 100% 100%, 8% 100%, 0 88%);
       position: relative;
       transition: 0.35s;
     }
@@ -106,15 +91,15 @@
       content: "";
       position: absolute;
       inset: 0;
-      border: 1px solid rgba(139,92,246,0.4);
+      border: 1px solid rgba(139,92,246,0.45);
       clip-path: polygon(0 0, 92% 0, 100% 12%, 100% 100%, 8% 100%, 0 88%);
       opacity: 0;
       transition: 0.35s;
     }
 
     .card:hover {
-      transform: translateY(-6px) scale(1.01);
-      box-shadow: 0 0 30px rgba(0,234,255,0.25);
+      transform: translateY(-6px);
+      box-shadow: 0 0 30px rgba(0,234,255,0.3);
     }
 
     .card:hover::before {
@@ -133,15 +118,10 @@
       margin-bottom: 18px;
     }
 
-    .actions {
-      display: flex;
-      gap: 10px;
-    }
-
     .actions a {
-      flex: 1;
+      display: block;
       text-align: center;
-      padding: 8px 0;
+      padding: 9px 0;
       font-size: 0.7rem;
       text-decoration: none;
       color: #fff;
@@ -153,15 +133,15 @@
     .actions a:hover {
       background: var(--neon-blue);
       color: #000;
-      box-shadow: 0 0 14px rgba(0,234,255,0.8);
+      box-shadow: 0 0 14px rgba(0,234,255,0.9);
     }
 
     /* ---------- FOOTER ---------- */
     footer {
       margin-top: 40px;
-      padding: 22px 15px;
+      padding: 24px 15px;
       text-align: center;
-      border-top: 1px solid rgba(139,92,246,0.3);
+      border-top: 1px solid rgba(139,92,246,0.35);
       font-size: 0.7rem;
       color: var(--muted);
     }
@@ -181,136 +161,97 @@
 
   <!-- HEADER -->
   <header>
-    <h1>PDF TOOLS</h1>
-    <a href="https://github.com/" target="_blank">GitHub</a>
+    <h1>akashworldwide.docs</h1>
   </header>
 
   <!-- HERO -->
   <section class="hero">
     <h2>All-in-One PDF Toolkit</h2>
-    <p>Fast • Free • Privacy-First • 100% Browser-Based  
-       No uploads. No servers. Just pure power.</p>
+    <p>
+      Fast • Free • Privacy-First • 100% Browser-Based  
+      <br>No uploads. No servers. No tracking.
+    </p>
   </section>
 
   <!-- TOOLS -->
   <section class="tools">
 
-    <!-- CARD TEMPLATE -->
     <div class="card">
       <h3>Merge PDF</h3>
-      <p>Combine multiple PDF files into one document.</p>
-      <div class="actions">
-        <a href="merge-pdf.html">OPEN</a>
-        <a href="merge-pdf.html">EXPLORE</a>
-      </div>
+      <p>Combine multiple PDF files into one.</p>
+      <div class="actions"><a href="merge-pdf.html">OPEN</a></div>
     </div>
 
     <div class="card">
       <h3>Compress PDF</h3>
-      <p>Reduce PDF size without quality loss.</p>
-      <div class="actions">
-        <a href="compress-pdf.html">OPEN</a>
-        <a href="compress-pdf.html">EXPLORE</a>
-      </div>
+      <p>Reduce PDF file size easily.</p>
+      <div class="actions"><a href="compress-pdf.html">OPEN</a></div>
     </div>
 
     <div class="card">
       <h3>Split PDF</h3>
       <p>Split PDF into individual pages.</p>
-      <div class="actions">
-        <a href="split-pdf.html">OPEN</a>
-        <a href="split-pdf.html">EXPLORE</a>
-      </div>
+      <div class="actions"><a href="split-pdf.html">OPEN</a></div>
     </div>
 
     <div class="card">
       <h3>JPG to PDF</h3>
       <p>Convert images into PDF files.</p>
-      <div class="actions">
-        <a href="jpg-to-pdf.html">OPEN</a>
-        <a href="jpg-to-pdf.html">EXPLORE</a>
-      </div>
+      <div class="actions"><a href="jpg-to-pdf.html">OPEN</a></div>
     </div>
 
     <div class="card">
       <h3>PDF to JPG</h3>
-      <p>Extract images from PDF pages.</p>
-      <div class="actions">
-        <a href="pdf-to-jpg.html">OPEN</a>
-        <a href="pdf-to-jpg.html">EXPLORE</a>
-      </div>
+      <p>Convert PDF pages into images.</p>
+      <div class="actions"><a href="pdf-to-jpg.html">OPEN</a></div>
     </div>
 
     <div class="card">
       <h3>Protect PDF</h3>
       <p>Add password protection to PDFs.</p>
-      <div class="actions">
-        <a href="protect-pdf.html">OPEN</a>
-        <a href="protect-pdf.html">EXPLORE</a>
-      </div>
+      <div class="actions"><a href="protect-pdf.html">OPEN</a></div>
     </div>
 
     <div class="card">
       <h3>Unlock PDF</h3>
       <p>Remove password from secured PDFs.</p>
-      <div class="actions">
-        <a href="unlock-pdf.html">OPEN</a>
-        <a href="unlock-pdf.html">EXPLORE</a>
-      </div>
+      <div class="actions"><a href="unlock-pdf.html">OPEN</a></div>
     </div>
 
     <div class="card">
       <h3>Watermark PDF</h3>
-      <p>Add custom watermark to documents.</p>
-      <div class="actions">
-        <a href="watermark-pdf.html">OPEN</a>
-        <a href="watermark-pdf.html">EXPLORE</a>
-      </div>
+      <p>Add watermark to PDF documents.</p>
+      <div class="actions"><a href="watermark-pdf.html">OPEN</a></div>
     </div>
 
     <div class="card">
       <h3>PDF to Text</h3>
-      <p>Extract raw text from PDFs.</p>
-      <div class="actions">
-        <a href="pdf-to-text.html">OPEN</a>
-        <a href="pdf-to-text.html">EXPLORE</a>
-      </div>
+      <p>Extract text content from PDFs.</p>
+      <div class="actions"><a href="pdf-to-text.html">OPEN</a></div>
     </div>
 
     <div class="card">
       <h3>Text to PDF</h3>
       <p>Convert text files into PDFs.</p>
-      <div class="actions">
-        <a href="text-to-pdf.html">OPEN</a>
-        <a href="text-to-pdf.html">EXPLORE</a>
-      </div>
+      <div class="actions"><a href="text-to-pdf.html">OPEN</a></div>
     </div>
 
     <div class="card">
       <h3>PDF Metadata</h3>
-      <p>Edit and view PDF metadata.</p>
-      <div class="actions">
-        <a href="pdf-metadata.html">OPEN</a>
-        <a href="pdf-metadata.html">EXPLORE</a>
-      </div>
+      <p>View and edit PDF metadata.</p>
+      <div class="actions"><a href="pdf-metadata.html">OPEN</a></div>
     </div>
 
     <div class="card">
-      <h3>Reorder Pages</h3>
-      <p>Change PDF page order easily.</p>
-      <div class="actions">
-        <a href="reorder-pdf.html">OPEN</a>
-        <a href="reorder-pdf.html">EXPLORE</a>
-      </div>
+      <h3>Reorder PDF Pages</h3>
+      <p>Change page order inside PDFs.</p>
+      <div class="actions"><a href="reorder-pdf.html">OPEN</a></div>
     </div>
 
     <div class="card">
-      <h3>Delete Pages</h3>
-      <p>Remove unwanted pages from PDF.</p>
-      <div class="actions">
-        <a href="delete-pdf-pages.html">OPEN</a>
-        <a href="delete-pdf-pages.html">EXPLORE</a>
-      </div>
+      <h3>Delete PDF Pages</h3>
+      <p>Remove unwanted pages from PDFs.</p>
+      <div class="actions"><a href="delete-pdf-pages.html">OPEN</a></div>
     </div>
 
   </section>
