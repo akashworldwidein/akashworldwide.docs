@@ -5,121 +5,116 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Merge PDF | akashworldwide.docs</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
 <style>
-:root{
-  --bg:#050914;
-  --card:#0b1226;
-  --border:#1c2a4a;
-  --accent:#4fc3f7;
-  --text:#e6f1ff;
-  --muted:#9bb0d3;
-}
-*{box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{
-  margin:0;min-height:100vh;
-  background:radial-gradient(circle at top,#0c1a3a,#050914 60%);
-  color:var(--text);
-  display:flex;align-items:center;justify-content:center;
-}
-.card{
-  width:100%;max-width:480px;
-  background:linear-gradient(180deg,#0d1738,#090f26);
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:32px 26px;
-  text-align:center;
-}
-a{color:var(--accent);text-decoration:none;font-size:.85rem}
-h1{margin:12px 0 6px;font-size:1.6rem;color:var(--accent)}
-p{margin-bottom:22px;font-size:.95rem;color:var(--muted)}
-
-.upload{
-  border:2px dashed var(--accent);
-  border-radius:14px;
-  padding:16px;
-  margin-bottom:14px;
+  margin:0;
+  min-height:100vh;
+  background:#050914;
+  color:#e6f1ff;
   display:flex;
   align-items:center;
   justify-content:center;
+  font-family:Poppins,sans-serif;
+}
+.card{
+  width:100%;
+  max-width:420px;
+  background:#0b1226;
+  border:1px solid #1c2a4a;
+  border-radius:16px;
+  padding:28px;
+  text-align:center;
+}
+h1{color:#4fc3f7}
+p{color:#9bb0d3;font-size:.9rem}
+
+.upload{
+  border:2px dashed #4fc3f7;
+  border-radius:12px;
+  padding:14px;
+  margin:14px 0;
+  display:flex;
+  align-items:center;
   gap:10px;
+  justify-content:center;
 }
 
-.upload button{
-  background:#f5f5f5;
-  color:#020617;
-  border:none;
-  border-radius:8px;
+label{
+  background:#ffffff;
+  color:#000;
   padding:8px 14px;
-  font-size:.9rem;
+  border-radius:6px;
   cursor:pointer;
+  font-size:.9rem;
 }
 
 .upload span{
-  font-size:.85rem;
-  color:var(--muted);
+  font-size:.8rem;
+  color:#9bb0d3;
   word-break:break-all;
 }
 
 input[type=file]{display:none}
 
-.main-btn{
+button{
   width:100%;
-  padding:14px;
-  border-radius:14px;
+  margin-top:14px;
+  padding:12px;
   border:none;
-  background:var(--accent);
+  border-radius:10px;
+  background:#4fc3f7;
   color:#020617;
-  font-size:1rem;
   font-weight:600;
   cursor:pointer;
 }
 
 .loader{
-  margin:18px auto;
-  width:42px;height:42px;
+  display:none;
+  margin:16px auto;
+  width:32px;height:32px;
   border:4px solid #1c2a4a;
-  border-top:4px solid var(--accent);
+  border-top:4px solid #4fc3f7;
   border-radius:50%;
   animation:spin 1s linear infinite;
-  display:none;
 }
-
 @keyframes spin{to{transform:rotate(360deg)}}
 
-footer{margin-top:18px;font-size:.8rem;color:#7fa1d6}
+footer{
+  margin-top:14px;
+  font-size:.75rem;
+  color:#7fa1d6;
+}
 </style>
 </head>
 
 <body>
 
 <div class="card">
-<a href="index.html">← Back to Home</a>
-
 <h1>Merge PDF</h1>
 <p>Select two PDF files and merge them into one.</p>
 
-<!-- Choose File 1 -->
+<!-- FILE 1 -->
 <div class="upload">
-  <button type="button" onclick="document.getElementById('pdf1').click()">Choose File</button>
+  <label for="pdf1">Choose File</label>
   <span id="name1">No file chosen</span>
   <input type="file" id="pdf1" accept="application/pdf">
 </div>
 
-<!-- Choose File 2 -->
+<!-- FILE 2 -->
 <div class="upload">
-  <button type="button" onclick="document.getElementById('pdf2').click()">Choose File</button>
+  <label for="pdf2">Choose File</label>
   <span id="name2">No file chosen</span>
   <input type="file" id="pdf2" accept="application/pdf">
 </div>
 
-<button class="main-btn" onclick="mergePDF()">Merge & Download</button>
+<button onclick="mergePDF()">Merge & Download</button>
 
 <div class="loader" id="loader"></div>
 
-<footer>Developed by <strong>akashworldwide</strong></footer>
+<footer>Developed by akashworldwide</footer>
 </div>
 
 <script>
@@ -129,21 +124,20 @@ const name1 = document.getElementById("name1");
 const name2 = document.getElementById("name2");
 const loader = document.getElementById("loader");
 
-pdf1.onchange = () => name1.textContent = pdf1.files[0]?.name || "No file chosen";
-pdf2.onchange = () => name2.textContent = pdf2.files[0]?.name || "No file chosen";
+pdf1.onchange = ()=> name1.textContent = pdf1.files[0]?.name || "No file chosen";
+pdf2.onchange = ()=> name2.textContent = pdf2.files[0]?.name || "No file chosen";
 
 async function mergePDF(){
   if(!pdf1.files.length || !pdf2.files.length){
-    alert("Please choose both PDF files.");
+    alert("Please choose both PDF files");
     return;
   }
-
   loader.style.display="block";
 
   const merged = await PDFLib.PDFDocument.create();
 
-  for(const file of [pdf1.files[0], pdf2.files[0]]){
-    const pdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
+  for(const f of [pdf1.files[0], pdf2.files[0]]){
+    const pdf = await PDFLib.PDFDocument.load(await f.arrayBuffer());
     const pages = await merged.copyPages(pdf, pdf.getPageIndices());
     pages.forEach(p=>merged.addPage(p));
   }
