@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PDF to Text | akashworldwide.docs</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+body{background:#050914;color:#e6f1ff;font-family:Poppins,sans-serif;
+display:flex;justify-content:center;align-items:center;min-height:100vh}
+.card{background:#0b1226;border:1px solid #1c2a4a;border-radius:16px;
+padding:22px;width:100%;max-width:520px}
+textarea{width:100%;height:200px;margin-top:10px}
+button{width:100%;margin-top:10px;padding:10px;background:#4fc3f7;border:none}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>PDF to Text</h2>
+<input type="file" id="pdf">
+<textarea id="out" placeholder="Extracted text"></textarea>
+<button onclick="extract()">Extract</button>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc=
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+async function extract(){
+ const f=document.getElementById("pdf").files[0];
+ const buf=await f.arrayBuffer();
+ const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+ let txt="";
+ for(let i=1;i<=pdf.numPages;i++){
+  const p=await pdf.getPage(i);
+  const c=await p.getTextContent();
+  txt+=c.items.map(i=>i.str).join(" ")+"\n\n";
+ }
+ out.value=txt;
+}
+</script>
+</body>
+</html>
