@@ -30,17 +30,13 @@ body{
 
 /* ---------- HEADER ---------- */
 header{
-  padding:48px 20px 34px;
+  padding:46px 20px 32px;
   text-align:center;
 }
 header h1{
   font-size:clamp(1.6rem,5.5vw,2.4rem);
   font-weight:700;
   color:var(--accent);
-  line-height:1.2;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 }
 header p{
   margin-top:14px;
@@ -54,8 +50,8 @@ header p{
 
 /* ---------- NOTICE ---------- */
 .notice{
-  max-width:820px;
-  margin:0 auto 24px;
+  max-width:860px;
+  margin:0 auto 26px;
   padding:12px 16px;
   background:#0b1735;
   border:1px solid var(--border);
@@ -65,13 +61,13 @@ header p{
   text-align:center;
 }
 
-/* ---------- TOOLS GRID ---------- */
+/* ---------- GRID ---------- */
 .grid{
-  max-width:1100px;
-  margin:30px auto 60px;
+  max-width:1150px;
+  margin:30px auto 70px;
   padding:0 20px;
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
   gap:22px;
 }
 .card{
@@ -90,11 +86,11 @@ header p{
 .card h3{
   color:var(--accent);
   margin-bottom:8px;
-  font-size:1.15rem;
+  font-size:1.1rem;
 }
 .card p{
   color:var(--muted);
-  font-size:.9rem;
+  font-size:.88rem;
 }
 a{
   text-decoration:none;
@@ -135,72 +131,35 @@ footer a{
 <header>
   <h1>akashworldwide.docs</h1>
   <p>
-    Free • Fast • Privacy-first document tools with bank-level encryption
+    Free • Fast • Privacy-first document tools with bank-level security
   </p>
 </header>
 
 <div class="notice">
-  🔒 Files are processed locally in your browser.
-  ⬇ Downloads start when you tap the <b>Download</b> button inside each tool.
+  🔒 All files are processed locally in your browser.
+  ⬇ Downloads start only when you click the <b>Download</b> button.
 </div>
 
 <section class="grid">
 
-<a href="merge-pdf.html">
-  <div class="card">
-    <h3>Merge PDF</h3>
-    <p>Combine multiple PDF files into one</p>
-  </div>
-</a>
+<!-- CORE PDF -->
+<a href="merge-pdf.html"><div class="card"><h3>Merge PDF</h3><p>Combine multiple PDFs into one</p></div></a>
+<a href="split-pdf.html"><div class="card"><h3>Split PDF</h3><p>Split PDF into individual pages</p></div></a>
+<a href="compress-pdf.html"><div class="card"><h3>Compress PDF</h3><p>Reduce PDF file size</p></div></a>
+<a href="reorder-pdf.html"><div class="card"><h3>Reorder PDF</h3><p>Change PDF page order</p></div></a>
+<a href="delete-pdf-pages.html"><div class="card"><h3>Delete PDF Pages</h3><p>Remove unwanted pages</p></div></a>
 
-<a href="split-pdf.html">
-  <div class="card">
-    <h3>Split PDF</h3>
-    <p>Split a PDF into individual pages</p>
-  </div>
-</a>
+<!-- CONVERT -->
+<a href="pdf-to-jpg.html"><div class="card"><h3>PDF to JPG</h3><p>Convert PDF pages to images</p></div></a>
+<a href="jpg-to-pdf.html"><div class="card"><h3>JPG to PDF</h3><p>Convert images into a PDF</p></div></a>
+<a href="pdf-to-text.html"><div class="card"><h3>PDF to Text</h3><p>Extract text from PDF</p></div></a>
+<a href="text-to-pdf.html"><div class="card"><h3>Text to PDF</h3><p>Create PDF from text</p></div></a>
 
-<a href="compress-pdf.html">
-  <div class="card">
-    <h3>Compress PDF</h3>
-    <p>Reduce PDF file size</p>
-  </div>
-</a>
-
-<a href="pdf-to-jpg.html">
-  <div class="card">
-    <h3>PDF to JPG</h3>
-    <p>Convert PDF pages into images</p>
-  </div>
-</a>
-
-<a href="jpg-to-pdf.html">
-  <div class="card">
-    <h3>JPG to PDF</h3>
-    <p>Convert images into a PDF file</p>
-  </div>
-</a>
-
-<a href="protect-pdf.html">
-  <div class="card">
-    <h3>Protect PDF</h3>
-    <p>Add password protection to a PDF</p>
-  </div>
-</a>
-
-<a href="delete-pdf-pages.html">
-  <div class="card">
-    <h3>Delete PDF Pages</h3>
-    <p>Remove unwanted pages from a PDF</p>
-  </div>
-</a>
-
-<a href="reorder-pdf.html">
-  <div class="card">
-    <h3>Reorder PDF</h3>
-    <p>Change PDF page order easily</p>
-  </div>
-</a>
+<!-- SECURITY & EDIT -->
+<a href="protect-pdf.html"><div class="card"><h3>Protect PDF</h3><p>Add password protection</p></div></a>
+<a href="unlock-pdf.html"><div class="card"><h3>Unlock PDF</h3><p>Remove PDF password</p></div></a>
+<a href="watermark-pdf.html"><div class="card"><h3>PDF Watermark</h3><p>Add text watermark</p></div></a>
+<a href="pdf-metadata.html"><div class="card"><h3>PDF Metadata Editor</h3><p>Edit title, author & info</p></div></a>
 
 </section>
 
