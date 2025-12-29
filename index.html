@@ -5,84 +5,182 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>akashworldwide.docs</title>
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:#0f172a;color:#e5e7eb;min-height:100vh}
-header{text-align:center;padding:30px 20px}
-header h1{color:#38bdf8;font-size:2.2rem}
-header p{color:#cbd5f5;margin-top:8px}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 
-.tools{
-max-width:1000px;
-margin:40px auto;
-padding:0 20px;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
+<style>
+:root{
+  --bg:#050914;
+  --card:#0b1226;
+  --border:#1c2a4a;
+  --accent:#4fc3f7;
+  --accent-soft:rgba(79,195,247,.15);
+  --text:#e6f1ff;
+  --muted:#9bb0d3;
 }
 
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top,#0c1a3a 0%,#050914 60%);
+  color:var(--text);
+}
+
+/* ===== HEADER ===== */
+header{
+  text-align:center;
+  padding:50px 20px 30px;
+}
+
+header h1{
+  font-size:2.3rem;
+  font-weight:600;
+  background:linear-gradient(90deg,#4fc3f7,#81d4fa);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+header p{
+  margin-top:12px;
+  font-size:.95rem;
+  color:var(--muted);
+}
+
+/* ===== TOOLS GRID ===== */
+.tools{
+  max-width:1050px;
+  margin:30px auto 60px;
+  padding:0 20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:24px;
+}
+
+/* ===== CARD ===== */
 .card{
-background:#020617;
-border:1px solid #1e293b;
-border-radius:12px;
-padding:25px;
-text-align:center;
-transition:.3s;
-cursor:pointer;
+  position:relative;
+  background:linear-gradient(180deg,#0d1738,#090f26);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:30px 26px;
+  text-align:center;
+  overflow:hidden;
+  transition:.35s ease;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    120deg,
+    transparent,
+    var(--accent-soft),
+    transparent
+  );
+  opacity:0;
+  transition:.35s;
+}
+
+.card:hover::before{
+  opacity:1;
 }
 
 .card:hover{
-border-color:#38bdf8;
-transform:translateY(-6px)
+  transform:translateY(-10px) scale(1.015);
+  border-color:var(--accent);
+  box-shadow:0 25px 55px rgba(79,195,247,.18);
 }
 
-.card h3{color:#38bdf8;margin-bottom:10px}
-.card p{color:#cbd5f5;font-size:.95rem}
+.card h3{
+  color:var(--accent);
+  font-size:1.15rem;
+  font-weight:500;
+  margin-bottom:10px;
+}
 
+.card p{
+  font-size:.9rem;
+  color:var(--muted);
+}
+
+/* ===== FOOTER ===== */
 footer{
-text-align:center;
-padding:25px;
-border-top:1px solid #1e293b;
-color:#94a3b8
+  text-align:center;
+  padding:28px 15px;
+  border-top:1px solid var(--border);
+  color:#7fa1d6;
+  font-size:.85rem;
 }
 
-a{text-decoration:none;color:inherit}
+/* ===== LINKS ===== */
+a{
+  text-decoration:none;
+  color:inherit;
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:480px){
+  header h1{font-size:2rem}
+  .card{padding:26px 22px}
+}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>akashworldwide.docs</h1>
-<p>Free • Fast • Privacy-friendly document tools</p>
+  <h1>akashworldwide.docs</h1>
+  <p>Free • Fast • Privacy-friendly document tools</p>
 </header>
 
 <section class="tools">
 
-<a href="merge-pdf.html"><div class="card">
-<h3>Merge PDF</h3><p>Combine multiple PDFs into one</p>
-</div></a>
+<a href="merge-pdf.html">
+  <div class="card">
+    <h3>Merge PDF</h3>
+    <p>Combine multiple PDF files into one</p>
+  </div>
+</a>
 
-<a href="split-pdf.html"><div class="card">
-<h3>Split PDF</h3><p>Split PDF into pages</p>
-</div></a>
+<a href="split-pdf.html">
+  <div class="card">
+    <h3>Split PDF</h3>
+    <p>Split a PDF into individual pages</p>
+  </div>
+</a>
 
-<a href="compress-pdf.html"><div class="card">
-<h3>Compress PDF</h3><p>Reduce PDF size</p>
-</div></a>
+<a href="compress-pdf.html">
+  <div class="card">
+    <h3>Compress PDF</h3>
+    <p>Reduce PDF file size efficiently</p>
+  </div>
+</a>
 
-<a href="pdf-to-jpg.html"><div class="card">
-<h3>PDF to JPG</h3><p>Convert PDF pages to images</p>
-</div></a>
+<a href="pdf-to-jpg.html">
+  <div class="card">
+    <h3>PDF to JPG</h3>
+    <p>Convert PDF pages into images</p>
+  </div>
+</a>
 
-<a href="jpg-to-pdf.html"><div class="card">
-<h3>JPG to PDF</h3><p>Convert images to PDF</p>
-</div></a>
+<a href="jpg-to-pdf.html">
+  <div class="card">
+    <h3>JPG to PDF</h3>
+    <p>Convert images into a single PDF</p>
+  </div>
+</a>
 
 </section>
 
 <footer>
-Developed by <strong>akashworldwide</strong>
+  Developed by <strong>akashworldwide</strong>
 </footer>
 
 </body>
