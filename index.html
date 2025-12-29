@@ -34,11 +34,13 @@ header{
   text-align:center;
 }
 header h1{
-  font-size:clamp(2rem,7vw,3.2rem);
+  font-size:clamp(1.6rem,5.5vw,2.4rem); /* 🔧 smaller + responsive */
   font-weight:700;
   color:var(--accent);
-  line-height:1.15;
-  word-break:break-word;
+  line-height:1.2;
+  white-space:nowrap;          /* 🔴 one line fix */
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 header p{
   margin-top:14px;
