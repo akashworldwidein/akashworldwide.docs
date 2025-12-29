@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reorder PDF | akashworldwide.docs</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+<style>
+:root{
+  --bg:#050914;
+  --card:#0b1226;
+  --border:#1c2a4a;
+  --accent:#4fc3f7;
+  --text:#e6f1ff;
+  --muted:#9bb0d3;
+  --success:#22c55e;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+body{
+  min-height:100vh;
+  background:radial-gradient(circle at top,#0c1a3a,#050914 65%);
+  color:var(--text);
+  display:flex;align-items:center;justify-content:center;
+}
+.card{
+  width:100%;max-width:560px;
+  background:linear-gradient(180deg,#0d1738,#090f26);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:28px;
+  text-align:center;
+}
+h1{color:var(--accent);margin-bottom:6px}
+p{color:var(--muted);font-size:.9rem;margin-bottom:16px}
+
+.upload{
+  border:2px dashed var(--accent);
+  border-radius:14px;
+  padding:16px;
+  margin-bottom:16px;
+}
+label{
+  background:#fff;color:#000;
+  padding:10px 18px;border-radius:8px;
+  cursor:pointer;font-weight:600;
+}
+input[type=file]{display:none}
+
+.pages{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+  gap:12px;
+  margin-top:14px;
+}
+.page{
+  border:2px solid var(--border);
+  border-radius:10px;
+  padding:6px;
+  background:#020617;
+  cursor:grab;
+}
+.page.dragging{opacity:.5}
+.page span{
+  display:block;
+  font-size:.75rem;
+  color:#9bb0d3;
+  margin-top:4px;
+}
+
+button{
+  width:100%;margin-top:18px;padding:14px;
+  background:var(--accent);color:#020617;
+  border:none;border-radius:14px;
+  font-weight:700;font-size:1rem;
+  cursor:pointer
+}
+button:disabled{opacity:.7;cursor:not-allowed}
+
+.download{
+  display:none;margin-top:18px;
+  background:var(--success);
+  color:#052e16;
+  padding:14px;border-radius:14px;
+  font-weight:700;text-decoration:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<h1>Reorder PDF</h1>
+<p>Drag and drop pages to change their order.</p>
+
+<div class="upload">
+  <label for="pdfFile">Choose PDF</label>
+  <input type="file" id="pdfFile" accept="application/pdf">
+</div>
+
+<div class="pages" id="pages"></div>
+
+<button id="buildBtn">Build Reordered PDF</button>
+
+<a id="downloadLink" class="download">⬇ Download Reordered PDF</a>
+
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+const pdfInput = document.getElementById("pdfFile");
+const pagesEl = document.getElementById("pages");
+const buildBtn = document.getElementById("buildBtn");
+const downloadLink = document.getElementById("downloadLink");
+
+let pdfBytes = null;
+let pageOrder = [];
+
+pdfInput.onchange = async ()=>{
+  const file = pdfInput.files[0];
+  if(!file) return;
+
+  pagesEl.innerHTML="";
+  downloadLink.style.display="none";
+
+  pdfBytes = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data:pdfBytes}).promise;
+
+  pageOrder = [];
+  for(let i=1;i<=pdf.numPages;i++){
+    const page = await pdf.getPage(i);
+    const v = page.getViewport({scale:0.3});
+    const canvas = document.createElement("canvas");
+    canvas.width=v.width; canvas.height=v.height;
+    await page.render({canvasContext:canvas.getContext("2d"),viewport:v}).promise;
+
+    const box = document.createElement("div");
+    box.className="page";
+    box.draggable=true;
+    box.dataset.index=i-1;
+    box.appendChild(canvas);
+
+    const label=document.createElement("span");
+    label.textContent=`Page ${i}`;
+    box.appendChild(label);
+
+    pagesEl.appendChild(box);
+    pageOrder.push(i-1);
+  }
+
+  enableDrag();
+};
+
+function enableDrag(){
+  let dragEl=null;
+
+  document.querySelectorAll(".page").forEach(el=>{
+    el.addEventListener("dragstart",()=>{
+      dragEl=el;
+      el.classList.add("dragging");
+    });
+    el.addEventListener("dragend",()=>{
+      el.classList.remove("dragging");
+      dragEl=null;
+      updateOrder();
+    });
+    el.addEventListener("dragover",e=>{
+      e.preventDefault();
+      const rect=el.getBoundingClientRect();
+      if(e.clientY < rect.top + rect.height/2){
+        pagesEl.insertBefore(dragEl, el);
+      }else{
+        pagesEl.insertBefore(dragEl, el.nextSibling);
+      }
+    });
+  });
+}
+
+function updateOrder(){
+  pageOrder=[...document.querySelectorAll(".page")]
+    .map(p=>Number(p.dataset.index));
+}
+
+buildBtn.onclick = async ()=>{
+  if(!pdfBytes){alert("Choose a PDF first");return;}
+
+  const src = await PDFLib.PDFDocument.load(pdfBytes);
+  const out = await PDFLib.PDFDocument.create();
+
+  const copied = await out.copyPages(src, pageOrder);
+  copied.forEach(p=>out.addPage(p));
+
+  const bytes = await out.save();
+  const blob = new Blob([bytes],{type:"application/pdf"});
+
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = "reordered.pdf";
+  downloadLink.style.display="block";
+};
+</script>
+
+</body>
+</html>
