@@ -8,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
 <style>
 body{
@@ -17,9 +18,9 @@ body{
   font-family:Poppins,sans-serif;
 }
 .card{
-  width:100%;max-width:480px;
+  width:100%;max-width:520px;
   background:#0b1226;border:1px solid #1c2a4a;
-  border-radius:16px;padding:26px;text-align:center;
+  border-radius:18px;padding:26px;text-align:center;
 }
 h1{color:#4fc3f7}
 p{color:#9bb0d3;font-size:.9rem}
@@ -38,7 +39,7 @@ button{
   border:none;border-radius:12px;font-weight:600;cursor:pointer
 }
 .loader{
-  display:none;margin:14px auto;width:34px;height:34px;
+  display:none;margin:14px auto;width:36px;height:36px;
   border:4px solid #1c2a4a;border-top:4px solid #4fc3f7;
   border-radius:50%;animation:spin 1s linear infinite
 }
@@ -57,11 +58,11 @@ button{
   <input type="file" id="pdf" accept="application/pdf">
 </div>
 
-<input type="text" id="pages" placeholder="Pages (e.g. 1-3,5) – empty = all">
+<input type="text" id="pages" placeholder="Pages (e.g. 1-3,5) — empty = all">
 
 <div class="preview" id="preview"></div>
 
-<button onclick="splitPDF()">Split & Download</button>
+<button onclick="splitPDF()">Split & Download ZIP</button>
 <div class="loader" id="loader"></div>
 
 </div>
@@ -74,23 +75,19 @@ const pdfInput = document.getElementById("pdf");
 const preview = document.getElementById("preview");
 const loader = document.getElementById("loader");
 
-let pdfBytes = null;
-let pageCount = 0;
+let pdfBytes=null, pageCount=0;
 
-pdfInput.onchange = async () => {
-  const file = pdfInput.files[0];
-  if(!file) return;
-
+pdfInput.onchange = async ()=>{
+  const file=pdfInput.files[0];
+  if(!file)return;
   preview.innerHTML="";
-  pdfBytes = await file.arrayBuffer();
-
-  const pdf = await pdfjsLib.getDocument({data:pdfBytes}).promise;
-  pageCount = pdf.numPages;
-
+  pdfBytes=await file.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:pdfBytes}).promise;
+  pageCount=pdf.numPages;
   for(let i=1;i<=pdf.numPages;i++){
-    const page = await pdf.getPage(i);
-    const v = page.getViewport({scale:0.3});
-    const c = document.createElement("canvas");
+    const page=await pdf.getPage(i);
+    const v=page.getViewport({scale:0.3});
+    const c=document.createElement("canvas");
     c.width=v.width;c.height=v.height;
     await page.render({canvasContext:c.getContext("2d"),viewport:v}).promise;
     preview.appendChild(c);
@@ -99,40 +96,43 @@ pdfInput.onchange = async () => {
 
 function parsePages(input,max){
   if(!input.trim()) return [...Array(max).keys()];
-  const out=new Set();
+  const s=new Set();
   input.split(",").forEach(p=>{
     if(p.includes("-")){
       let[a,b]=p.split("-").map(Number);
-      for(let i=a;i<=b;i++) if(i>=1&&i<=max) out.add(i-1);
+      for(let i=a;i<=b;i++) if(i>=1&&i<=max) s.add(i-1);
     }else{
-      let n=Number(p); if(n>=1&&n<=max) out.add(n-1);
+      let n=Number(p); if(n>=1&&n<=max) s.add(n-1);
     }
   });
-  return [...out];
+  return [...s];
 }
 
 async function splitPDF(){
   if(!pdfBytes){alert("Choose a PDF first");return;}
-
   const pages=parsePages(document.getElementById("pages").value,pageCount);
   if(!pages.length){alert("Invalid page numbers");return;}
 
   loader.style.display="block";
 
   const src=await PDFLib.PDFDocument.load(pdfBytes);
+  const zip=new JSZip();
 
   for(const i of pages){
     const out=await PDFLib.PDFDocument.create();
     const [p]=await out.copyPages(src,[i]);
     out.addPage(p);
-    const blob=new Blob([await out.save()],{type:"application/pdf"});
-    const a=document.createElement("a");
-    a.href=URL.createObjectURL(blob);
-    a.download=`page-${i+1}.pdf`;
-    a.click();
+    const bytes=await out.save();
+    zip.file(`page-${i+1}.pdf`,bytes);
   }
 
+  const zipBlob=await zip.generateAsync({type:"blob"});
   loader.style.display="none";
+
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(zipBlob);
+  a.download="split-pages.zip";
+  a.click();
 }
 </script>
 </body>
