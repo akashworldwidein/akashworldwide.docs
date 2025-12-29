@@ -30,26 +30,39 @@ body{
 
 /* ---------- HEADER ---------- */
 header{
-  padding:48px 20px 36px;
+  padding:48px 20px 34px;
   text-align:center;
 }
 header h1{
-  font-size:clamp(1.6rem,5.5vw,2.4rem); /* 🔧 smaller + responsive */
+  font-size:clamp(1.6rem,5.5vw,2.4rem);
   font-weight:700;
   color:var(--accent);
   line-height:1.2;
-  white-space:nowrap;          /* 🔴 one line fix */
+  white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
 header p{
   margin-top:14px;
-  max-width:720px;
+  max-width:760px;
   margin-left:auto;
   margin-right:auto;
   font-size:.95rem;
   color:var(--muted);
   line-height:1.6;
+}
+
+/* ---------- NOTICE ---------- */
+.notice{
+  max-width:820px;
+  margin:0 auto 24px;
+  padding:12px 16px;
+  background:#0b1735;
+  border:1px solid var(--border);
+  border-radius:12px;
+  font-size:.85rem;
+  color:#b6c7ee;
+  text-align:center;
 }
 
 /* ---------- TOOLS GRID ---------- */
@@ -126,6 +139,11 @@ footer a{
   </p>
 </header>
 
+<div class="notice">
+  🔒 Files are processed locally in your browser.
+  ⬇ Downloads start when you tap the <b>Download</b> button inside each tool.
+</div>
+
 <section class="grid">
 
 <a href="merge-pdf.html">
@@ -160,6 +178,27 @@ footer a{
   <div class="card">
     <h3>JPG to PDF</h3>
     <p>Convert images into a PDF file</p>
+  </div>
+</a>
+
+<a href="protect-pdf.html">
+  <div class="card">
+    <h3>Protect PDF</h3>
+    <p>Add password protection to a PDF</p>
+  </div>
+</a>
+
+<a href="delete-pdf-pages.html">
+  <div class="card">
+    <h3>Delete PDF Pages</h3>
+    <p>Remove unwanted pages from a PDF</p>
+  </div>
+</a>
+
+<a href="reorder-pdf.html">
+  <div class="card">
+    <h3>Reorder PDF</h3>
+    <p>Change PDF page order easily</p>
   </div>
 </a>
 
