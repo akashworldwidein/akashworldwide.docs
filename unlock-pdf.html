@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unlock PDF | akashworldwide.docs</title>
+<title>Delete PDF Pages | akashworldwide.docs</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
@@ -16,6 +16,7 @@
   --accent:#4fc3f7;
   --text:#e6f1ff;
   --muted:#9bb0d3;
+  --danger:#ef4444;
   --success:#22c55e;
 }
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
@@ -49,42 +50,53 @@ label{
 }
 input[type=file]{display:none}
 
-input[type=password]{
+input[type=text]{
   width:100%;
-  padding:12px;margin-top:12px;
+  padding:12px;
+  margin-top:12px;
   border-radius:10px;
   border:1px solid var(--border);
-  background:#020617;color:var(--text);
+  background:#020617;
+  color:var(--text);
   font-size:.95rem;
 }
 
 button{
-  width:100%;margin-top:18px;padding:14px;
-  background:var(--accent);color:#020617;
-  border:none;border-radius:14px;
-  font-weight:700;font-size:1rem;
+  width:100%;
+  margin-top:18px;
+  padding:14px;
+  background:var(--danger);
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  font-weight:700;
+  font-size:1rem;
   cursor:pointer;
 }
 button:disabled{opacity:.7;cursor:not-allowed}
 
 .loader{
-  display:none;margin:18px auto;
+  display:none;
+  margin:18px auto;
   width:40px;height:40px;
   border:5px solid #1c2a4a;
   border-top:5px solid var(--accent);
   border-radius:50%;
-  animation:spin 1s linear infinite
+  animation:spin 1s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
 .status{margin-top:12px;font-size:.9rem;color:var(--muted)}
 
 .download{
-  display:none;margin-top:18px;
+  display:none;
+  margin-top:18px;
   background:var(--success);
   color:#052e16;
-  padding:14px;border-radius:14px;
-  font-weight:700;text-decoration:none;
+  padding:14px;
+  border-radius:14px;
+  font-weight:700;
+  text-decoration:none;
 }
 </style>
 </head>
@@ -93,36 +105,37 @@ button:disabled{opacity:.7;cursor:not-allowed}
 
 <div class="card">
 
-<h1>Unlock PDF</h1>
-<p>Remove password protection from a PDF.</p>
+<h1>Delete PDF Pages</h1>
+<p>Remove unwanted pages from a PDF.</p>
 
 <div class="upload">
-  <label for="pdfFile">Choose Protected PDF</label>
+  <label for="pdfFile">Choose PDF</label>
   <input type="file" id="pdfFile" accept="application/pdf">
 </div>
 
-<input type="password" id="password" placeholder="Enter PDF password">
+<input type="text" id="pages"
+  placeholder="Pages to delete (e.g. 2, 4-6, 9)">
 
-<button id="unlockBtn">Unlock PDF</button>
+<button id="deleteBtn">Delete Pages</button>
 
 <div class="loader" id="loader"></div>
 <div class="status" id="status"></div>
 
-<a id="downloadLink" class="download">⬇ Download Unlocked PDF</a>
+<a id="downloadLink" class="download">⬇ Download Updated PDF</a>
 
 </div>
 
 <script>
 const pdfInput = document.getElementById("pdfFile");
-const passwordInput = document.getElementById("password");
-const btn = document.getElementById("unlockBtn");
+const pagesInput = document.getElementById("pages");
+const btn = document.getElementById("deleteBtn");
 const loader = document.getElementById("loader");
 const statusEl = document.getElementById("status");
 const downloadLink = document.getElementById("downloadLink");
 
 let pdfBytes = null;
 
-pdfInput.onchange = async () => {
+pdfInput.onchange = async ()=>{
   const file = pdfInput.files[0];
   if(!file) return;
   pdfBytes = await file.arrayBuffer();
@@ -130,43 +143,69 @@ pdfInput.onchange = async () => {
   downloadLink.style.display = "none";
 };
 
-btn.onclick = async () => {
+function parsePages(input, max){
+  const set = new Set();
+  input.split(",").forEach(p=>{
+    if(p.includes("-")){
+      let[a,b]=p.split("-").map(Number);
+      for(let i=a;i<=b;i++) if(i>=1&&i<=max) set.add(i-1);
+    }else{
+      let n=Number(p); if(n>=1&&n<=max) set.add(n-1);
+    }
+  });
+  return [...set];
+}
+
+btn.onclick = async ()=>{
   if(!pdfBytes){
-    alert("Please choose a PDF file");
+    alert("Choose a PDF file");
     return;
   }
-  if(!passwordInput.value){
-    alert("Please enter the PDF password");
+  if(!pagesInput.value.trim()){
+    alert("Enter page numbers to delete");
     return;
   }
 
   btn.disabled = true;
   btn.textContent = "Processing…";
   loader.style.display = "block";
-  statusEl.textContent = "Removing password…";
+  statusEl.textContent = "Removing selected pages…";
 
-  try{
-    const pdfDoc = await PDFLib.PDFDocument.load(pdfBytes, {
-      password: passwordInput.value
-    });
+  const src = await PDFLib.PDFDocument.load(pdfBytes);
+  const total = src.getPageCount();
+  const delPages = parsePages(pagesInput.value, total);
 
-    const newBytes = await pdfDoc.save();
-    const blob = new Blob([newBytes], { type:"application/pdf" });
-
-    const fileName = "unlocked.pdf";
-    downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.download = fileName;
-    downloadLink.style.display = "block";
-
-    statusEl.innerHTML = "✅ Password removed successfully";
-  }catch(e){
-    alert("Wrong password or unsupported PDF.");
-    statusEl.textContent = "❌ Failed to unlock PDF";
+  if(!delPages.length){
+    alert("Invalid page numbers");
+    loader.style.display = "none";
+    btn.disabled = false;
+    btn.textContent = "Delete Pages";
+    return;
   }
+
+  const out = await PDFLib.PDFDocument.create();
+  const keep = [];
+
+  for(let i=0;i<total;i++){
+    if(!delPages.includes(i)) keep.push(i);
+  }
+
+  const copied = await out.copyPages(src, keep);
+  copied.forEach(p=>out.addPage(p));
+
+  const bytes = await out.save();
+  const blob = new Blob([bytes], {type:"application/pdf"});
 
   loader.style.display = "none";
   btn.disabled = false;
-  btn.textContent = "Unlock PDF";
+  btn.textContent = "Delete Pages";
+
+  const fileName = "pages-deleted.pdf";
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = fileName;
+  downloadLink.style.display = "block";
+
+  statusEl.innerHTML = `✅ Deleted ${delPages.length} page(s) successfully`;
 };
 </script>
 
