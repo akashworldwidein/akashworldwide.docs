@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PDF Watermark | akashworldwide.docs</title>
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<style>
+body{background:#050914;color:#e6f1ff;font-family:Poppins,sans-serif;
+display:flex;justify-content:center;align-items:center;min-height:100vh}
+.card{background:#0b1226;border:1px solid #1c2a4a;border-radius:16px;
+padding:22px;width:100%;max-width:420px;text-align:center}
+input,button{width:100%;padding:10px;margin-top:10px;border-radius:8px}
+button{background:#4fc3f7;border:none;font-weight:600}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>PDF Watermark</h2>
+<input type="file" id="pdf" accept="application/pdf">
+<input type="text" id="text" placeholder="Watermark text">
+<button onclick="addWM()">Apply & Download</button>
+</div>
+
+<script>
+async function addWM(){
+ const f=document.getElementById("pdf").files[0];
+ const t=document.getElementById("text").value||"CONFIDENTIAL";
+ const bytes=await f.arrayBuffer();
+ const pdf=await PDFLib.PDFDocument.load(bytes);
+ const pages=pdf.getPages();
+ pages.forEach(p=>{
+  p.drawText(t,{
+    x:50,y:p.getHeight()/2,
+    size:40,opacity:.2,rotate:PDFLib.degrees(30)
+  });
+ });
+ const out=await pdf.save();
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([out],{type:"application/pdf"}));
+ a.download="watermarked.pdf";a.click();
+}
+</script>
+</body>
+</html>
