@@ -2,129 +2,188 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Compress PDF | akashworldwide.docs</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- pdf-lib -->
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <!-- PDF-LIB -->
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
 
   <style>
-    * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+    :root {
+      --bg-dark: #05070d;
+      --bg-light: #0b1220;
+      --card-bg: #0e1526;
+      --neon-blue: #00eaff;
+      --neon-purple: #8b5cf6;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
 
     body {
-      margin: 0;
+      background: radial-gradient(circle at top, var(--bg-light), var(--bg-dark));
+      color: var(--text);
       min-height: 100vh;
-      background: #0f172a;
-      color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px;
+      border-bottom: 1px solid rgba(0,234,255,0.25);
+    }
+
+    header h1 {
+      color: var(--neon-blue);
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px rgba(0,234,255,0.7);
+      font-size: 1.2rem;
     }
 
     .container {
-      background: #020617;
-      border: 1px solid #1e293b;
+      max-width: 600px;
+      margin: 60px auto;
+      background: linear-gradient(180deg, #0e1526, #0a1020);
       padding: 30px;
-      border-radius: 14px;
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
+      border: 1px solid rgba(0,234,255,0.3);
+      clip-path: polygon(0 0, 92% 0, 100% 12%, 100% 100%, 8% 100%, 0 88%);
     }
 
-    h1 {
-      color: #38bdf8;
-      margin-bottom: 8px;
+    h2 {
+      text-align: center;
+      margin-bottom: 15px;
+      color: var(--neon-blue);
     }
 
     p {
-      color: #cbd5f5;
-      font-size: 0.95rem;
-      margin-bottom: 20px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 25px;
+      line-height: 1.5;
     }
 
     input[type="file"] {
       width: 100%;
       padding: 12px;
-      background: #020617;
-      border: 1px dashed #38bdf8;
-      border-radius: 10px;
-      color: #cbd5f5;
+      border: 1px dashed var(--neon-blue);
+      background: transparent;
+      color: var(--text);
       margin-bottom: 20px;
-      cursor: pointer;
     }
 
     button {
       width: 100%;
       padding: 12px;
-      background: #38bdf8;
-      color: #020617;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: bold;
+      font-size: 0.8rem;
+      border: 1px solid var(--neon-blue);
+      background: transparent;
+      color: #fff;
       cursor: pointer;
+      transition: 0.3s;
     }
 
     button:hover {
-      background: #0ea5e9;
+      background: var(--neon-blue);
+      color: #000;
+      box-shadow: 0 0 15px rgba(0,234,255,0.9);
+    }
+
+    .info {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.7rem;
+      color: var(--muted);
     }
 
     footer {
-      margin-top: 18px;
-      font-size: 0.85rem;
-      color: #94a3b8;
+      text-align: center;
+      margin-top: 60px;
+      padding: 20px;
+      font-size: 0.65rem;
+      color: var(--muted);
+      border-top: 1px solid rgba(139,92,246,0.35);
+    }
+
+    footer span {
+      color: var(--neon-blue);
     }
   </style>
 </head>
-
 <body>
 
+  <!-- HEADER -->
+  <header>
+    <h1>akashworldwide.docs</h1>
+  </header>
+
+  <!-- MAIN -->
   <div class="container">
-    <h1>Compress PDF</h1>
-    <p>Reduce PDF size by optimizing pages (browser-based).</p>
+    <h2>Compress PDF</h2>
+    <p>
+      Reduce PDF file size directly in your browser.  
+      No upload • No tracking • Privacy-first
+    </p>
 
-    <input type="file" id="pdfFile" accept="application/pdf" />
+    <input type="file" id="pdfInput" accept="application/pdf" />
+    <button onclick="compressPDF()">COMPRESS & DOWNLOAD</button>
 
-    <button onclick="compressPDF()">Compress & Download</button>
-
-    <footer>
-      Developed by <strong>akashworldwide</strong>
-    </footer>
+    <div class="info" id="infoText"></div>
   </div>
+
+  <!-- FOOTER -->
+  <footer>
+    Developed by <span>akashworldwide</span><br>
+    Powered by GitHub
+  </footer>
 
   <script>
     async function compressPDF() {
-      const fileInput = document.getElementById("pdfFile");
+      const fileInput = document.getElementById("pdfInput");
+      const info = document.getElementById("infoText");
 
       if (!fileInput.files.length) {
-        alert("Please select a PDF file.");
+        alert("Please select a PDF file");
         return;
       }
 
       const file = fileInput.files[0];
+      info.textContent = "Processing... Please wait";
+
       const arrayBuffer = await file.arrayBuffer();
+      const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
 
-      const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer, {
-        ignoreEncryption: true
-      });
-
-      // Re-save PDF with basic optimization
-      const compressedBytes = await pdfDoc.save({
+      // Save with optimization
+      const compressedPdf = await pdfDoc.save({
         useObjectStreams: true,
-        addDefaultPage: false
+        addDefaultPage: false,
       });
 
-      const blob = new Blob([compressedBytes], { type: "application/pdf" });
+      const blob = new Blob([compressedPdf], { type: "application/pdf" });
       const url = URL.createObjectURL(blob);
 
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "compressed.pdf";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = file.name.replace(".pdf", "-compressed.pdf");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
 
-      URL.revokeObjectURL(url);
+      const originalSize = (file.size / 1024 / 1024).toFixed(2);
+      const newSize = (blob.size / 1024 / 1024).toFixed(2);
+
+      info.innerHTML = `
+        Original: ${originalSize} MB <br>
+        Compressed: ${newSize} MB
+      `;
     }
   </script>
 
