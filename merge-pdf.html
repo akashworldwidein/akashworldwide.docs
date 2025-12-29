@@ -17,57 +17,34 @@
   --text:#e6f1ff;
   --muted:#9bb0d3;
 }
-
 *{box-sizing:border-box;font-family:'Poppins',sans-serif}
-
 body{
-  margin:0;
-  min-height:100vh;
+  margin:0;min-height:100vh;
   background:radial-gradient(circle at top,#0c1a3a,#050914 60%);
   color:var(--text);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:flex;align-items:center;justify-content:center;
 }
-
 .card{
-  width:100%;
-  max-width:480px;
+  width:100%;max-width:480px;
   background:linear-gradient(180deg,#0d1738,#090f26);
   border:1px solid var(--border);
   border-radius:20px;
   padding:32px 26px;
   text-align:center;
 }
+a{color:var(--accent);text-decoration:none;font-size:.85rem}
+h1{margin:12px 0 6px;font-size:1.6rem;color:var(--accent)}
+p{margin-bottom:22px;font-size:.95rem;color:var(--muted)}
 
-a{
-  color:var(--accent);
-  text-decoration:none;
-  font-size:.85rem;
-}
-
-h1{
-  margin:12px 0 6px;
-  font-size:1.6rem;
-  color:var(--accent);
-}
-
-p{
-  margin-bottom:22px;
-  font-size:.95rem;
-  color:var(--muted);
-}
-
-/* upload box */
 .upload{
   border:2px dashed var(--accent);
   border-radius:14px;
-  padding:18px;
+  padding:16px;
   margin-bottom:14px;
   display:flex;
   align-items:center;
-  gap:10px;
   justify-content:center;
+  gap:10px;
 }
 
 .upload button{
@@ -88,11 +65,9 @@ p{
 
 input[type=file]{display:none}
 
-/* main button */
 .main-btn{
   width:100%;
   padding:14px;
-  margin-top:10px;
   border-radius:14px;
   border:none;
   background:var(--accent);
@@ -102,11 +77,9 @@ input[type=file]{display:none}
   cursor:pointer;
 }
 
-/* loader */
 .loader{
   margin:18px auto;
-  width:42px;
-  height:42px;
+  width:42px;height:42px;
   border:4px solid #1c2a4a;
   border-top:4px solid var(--accent);
   border-radius:50%;
@@ -116,35 +89,30 @@ input[type=file]{display:none}
 
 @keyframes spin{to{transform:rotate(360deg)}}
 
-footer{
-  margin-top:18px;
-  font-size:.8rem;
-  color:#7fa1d6;
-}
+footer{margin-top:18px;font-size:.8rem;color:#7fa1d6}
 </style>
 </head>
 
 <body>
 
 <div class="card">
-
 <a href="index.html">← Back to Home</a>
 
 <h1>Merge PDF</h1>
-<p>Select multiple PDF files and merge them into one.</p>
+<p>Select two PDF files and merge them into one.</p>
 
-<!-- FILE 1 -->
+<!-- Choose File 1 -->
 <div class="upload">
-  <button onclick="file1.click()">Choose File</button>
+  <button type="button" onclick="document.getElementById('pdf1').click()">Choose File</button>
   <span id="name1">No file chosen</span>
-  <input type="file" id="file1" accept="application/pdf">
+  <input type="file" id="pdf1" accept="application/pdf">
 </div>
 
-<!-- FILE 2 -->
+<!-- Choose File 2 -->
 <div class="upload">
-  <button onclick="file2.click()">Choose File</button>
+  <button type="button" onclick="document.getElementById('pdf2').click()">Choose File</button>
   <span id="name2">No file chosen</span>
-  <input type="file" id="file2" accept="application/pdf">
+  <input type="file" id="pdf2" accept="application/pdf">
 </div>
 
 <button class="main-btn" onclick="mergePDF()">Merge & Download</button>
@@ -152,33 +120,36 @@ footer{
 <div class="loader" id="loader"></div>
 
 <footer>Developed by <strong>akashworldwide</strong></footer>
-
 </div>
 
 <script>
-const f1 = document.getElementById("file1");
-const f2 = document.getElementById("file2");
+const pdf1 = document.getElementById("pdf1");
+const pdf2 = document.getElementById("pdf2");
+const name1 = document.getElementById("name1");
+const name2 = document.getElementById("name2");
+const loader = document.getElementById("loader");
 
-f1.onchange = () => document.getElementById("name1").textContent = f1.files[0]?.name || "No file chosen";
-f2.onchange = () => document.getElementById("name2").textContent = f2.files[0]?.name || "No file chosen";
+pdf1.onchange = () => name1.textContent = pdf1.files[0]?.name || "No file chosen";
+pdf2.onchange = () => name2.textContent = pdf2.files[0]?.name || "No file chosen";
 
 async function mergePDF(){
-  if(!f1.files.length || !f2.files.length){
-    alert("Please choose two PDF files.");
+  if(!pdf1.files.length || !pdf2.files.length){
+    alert("Please choose both PDF files.");
     return;
   }
 
-  document.getElementById("loader").style.display="block";
+  loader.style.display="block";
 
   const merged = await PDFLib.PDFDocument.create();
-  for(const file of [f1.files[0], f2.files[0]]){
+
+  for(const file of [pdf1.files[0], pdf2.files[0]]){
     const pdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
     const pages = await merged.copyPages(pdf, pdf.getPageIndices());
     pages.forEach(p=>merged.addPage(p));
   }
 
   const blob = new Blob([await merged.save()],{type:"application/pdf"});
-  document.getElementById("loader").style.display="none";
+  loader.style.display="none";
 
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
