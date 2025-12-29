@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Split PDF | akashworldwide.docs</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
@@ -18,35 +18,69 @@ body{
   font-family:Poppins,sans-serif;
 }
 .card{
-  width:100%;max-width:520px;
+  width:100%;max-width:540px;
   background:#0b1226;border:1px solid #1c2a4a;
-  border-radius:18px;padding:26px;text-align:center;
+  border-radius:18px;padding:28px;text-align:center;
 }
-h1{color:#4fc3f7}
+h1{color:#4fc3f7;margin-bottom:6px}
 p{color:#9bb0d3;font-size:.9rem}
-.upload{border:2px dashed #4fc3f7;border-radius:12px;padding:14px;margin:14px 0}
-label{background:#fff;color:#000;padding:8px 14px;border-radius:6px;cursor:pointer}
-input[type=file]{display:none}
-input[type=text]{
-  width:100%;padding:10px;margin-top:10px;
-  background:#020617;color:#e6f1ff;border:1px solid #1c2a4a;border-radius:8px
+
+.upload{
+  border:2px dashed #4fc3f7;border-radius:14px;
+  padding:16px;margin:16px 0;
 }
-.preview{display:grid;grid-template-columns:repeat(auto-fill,minmax(80px,1fr));gap:10px;margin-top:14px}
-.preview canvas{width:100%;border-radius:6px;border:1px solid #1c2a4a}
+label{
+  background:#fff;color:#000;
+  padding:10px 18px;border-radius:8px;
+  cursor:pointer;font-weight:600;
+}
+input[type=file]{display:none}
+
+input[type=text]{
+  width:100%;padding:12px;margin-top:10px;
+  background:#020617;color:#e6f1ff;
+  border:1px solid #1c2a4a;border-radius:10px
+}
+
+.preview{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(90px,1fr));
+  gap:12px;margin-top:16px
+}
+.preview canvas{
+  width:100%;
+  border-radius:8px;
+  border:1px solid #1c2a4a
+}
+
 button{
-  width:100%;margin-top:14px;padding:12px;
+  width:100%;margin-top:18px;padding:14px;
   background:#4fc3f7;color:#020617;
-  border:none;border-radius:12px;font-weight:600;cursor:pointer
+  border:none;border-radius:14px;
+  font-weight:700;font-size:1rem;
+  cursor:pointer
 }
 button:disabled{opacity:.7;cursor:not-allowed}
+
 .loader{
-  display:none;margin:14px auto;width:36px;height:36px;
-  border:4px solid #1c2a4a;border-top:4px solid #4fc3f7;
-  border-radius:50%;animation:spin 1s linear infinite
+  display:none;margin:18px auto;
+  width:40px;height:40px;
+  border:5px solid #1c2a4a;
+  border-top:5px solid #4fc3f7;
+  border-radius:50%;
+  animation:spin 1s linear infinite
 }
 @keyframes spin{to{transform:rotate(360deg)}}
-.status{margin-top:10px;font-size:.9rem;color:#9bb0d3}
+
+.status{margin-top:12px;font-size:.95rem;color:#9bb0d3}
 .progress{margin-top:6px;font-size:.85rem;color:#7fa1d6}
+
+.download{
+  display:none;margin-top:18px;
+  background:#22c55e;color:#02120a;
+  padding:14px;border-radius:14px;
+  font-weight:700;text-decoration:none;
+}
 </style>
 </head>
 
@@ -65,11 +99,13 @@ button:disabled{opacity:.7;cursor:not-allowed}
 
 <div class="preview" id="preview"></div>
 
-<button id="splitBtn" onclick="splitPDF()">Split & Download ZIP</button>
-<div class="loader" id="loader"></div>
+<button id="splitBtn">Split PDF</button>
 
+<div class="loader" id="loader"></div>
 <div class="status" id="status"></div>
 <div class="progress" id="progress"></div>
+
+<a id="downloadLink" class="download">⬇ Download ZIP</a>
 
 </div>
 
@@ -83,23 +119,29 @@ const loader = document.getElementById("loader");
 const statusEl = document.getElementById("status");
 const progressEl = document.getElementById("progress");
 const btn = document.getElementById("splitBtn");
+const downloadLink = document.getElementById("downloadLink");
 
-let pdfBytes=null, pageCount=0;
+let pdfBytes = null;
+let pageCount = 0;
 
-pdfInput.onchange = async ()=>{
-  const file=pdfInput.files[0];
-  if(!file)return;
+pdfInput.onchange = async () => {
+  const file = pdfInput.files[0];
+  if(!file) return;
+
   preview.innerHTML="";
   statusEl.textContent="";
   progressEl.textContent="";
-  pdfBytes=await file.arrayBuffer();
-  const pdf=await pdfjsLib.getDocument({data:pdfBytes}).promise;
-  pageCount=pdf.numPages;
+  downloadLink.style.display="none";
+
+  pdfBytes = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data:pdfBytes}).promise;
+  pageCount = pdf.numPages;
+
   for(let i=1;i<=pdf.numPages;i++){
-    const page=await pdf.getPage(i);
-    const v=page.getViewport({scale:0.3});
-    const c=document.createElement("canvas");
-    c.width=v.width;c.height=v.height;
+    const page = await pdf.getPage(i);
+    const v = page.getViewport({scale:0.3});
+    const c = document.createElement("canvas");
+    c.width=v.width; c.height=v.height;
     await page.render({canvasContext:c.getContext("2d"),viewport:v}).promise;
     preview.appendChild(c);
   }
@@ -107,61 +149,72 @@ pdfInput.onchange = async ()=>{
 
 function parsePages(input,max){
   if(!input.trim()) return [...Array(max).keys()];
-  const s=new Set();
+  const set = new Set();
   input.split(",").forEach(p=>{
     if(p.includes("-")){
       let[a,b]=p.split("-").map(Number);
-      for(let i=a;i<=b;i++) if(i>=1&&i<=max) s.add(i-1);
+      for(let i=a;i<=b;i++) if(i>=1&&i<=max) set.add(i-1);
     }else{
-      let n=Number(p); if(n>=1&&n<=max) s.add(n-1);
+      let n=Number(p); if(n>=1&&n<=max) set.add(n-1);
     }
   });
-  return [...s];
+  return [...set];
 }
 
-async function splitPDF(){
-  if(!pdfBytes){alert("Choose a PDF first");return;}
-
-  const pages=parsePages(document.getElementById("pages").value,pageCount);
-  if(!pages.length){alert("Invalid page numbers");return;}
-
-  btn.disabled=true;
-  btn.textContent="Processing…";
-  loader.style.display="block";
-  statusEl.textContent="Preparing pages…";
-  progressEl.textContent="";
-
-  const src=await PDFLib.PDFDocument.load(pdfBytes);
-  const zip=new JSZip();
-
-  let done=0;
-  for(const i of pages){
-    const out=await PDFLib.PDFDocument.create();
-    const [p]=await out.copyPages(src,[i]);
-    out.addPage(p);
-    const bytes=await out.save();
-    zip.file(`page-${i+1}.pdf`,bytes);
-
-    done++;
-    progressEl.textContent=`Added ${done} of ${pages.length} pages`;
+btn.onclick = async () => {
+  if(!pdfBytes){
+    alert("Choose a PDF first");
+    return;
   }
 
-  statusEl.textContent="Creating ZIP file…";
-  const zipBlob=await zip.generateAsync({type:"blob"});
+  const pages = parsePages(
+    document.getElementById("pages").value,
+    pageCount
+  );
+  if(!pages.length){
+    alert("Invalid page numbers");
+    return;
+  }
 
-  loader.style.display="none";
-  btn.disabled=false;
-  btn.textContent="Split & Download ZIP";
+  btn.disabled = true;
+  btn.textContent = "Processing…";
+  loader.style.display = "block";
+  statusEl.textContent = "Preparing pages…";
+  progressEl.textContent = "";
+  downloadLink.style.display="none";
 
-  const fileName=`split-pages-${pages.length}.zip`;
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(zipBlob);
-  a.download=fileName;
-  a.click();
+  const src = await PDFLib.PDFDocument.load(pdfBytes);
+  const zip = new JSZip();
 
-  statusEl.innerHTML=`✅ <strong>Download started</strong><br>File: <code>${fileName}</code>`;
-  progressEl.textContent="Check your browser downloads";
-}
+  let done = 0;
+  for(const i of pages){
+    const out = await PDFLib.PDFDocument.create();
+    const [p] = await out.copyPages(src,[i]);
+    out.addPage(p);
+    const bytes = await out.save();
+    zip.file(`page-${i+1}.pdf`, bytes);
+
+    done++;
+    progressEl.textContent = `Added ${done} of ${pages.length} pages`;
+  }
+
+  statusEl.textContent = "Creating ZIP file…";
+  const zipBlob = await zip.generateAsync({type:"blob"});
+
+  loader.style.display = "none";
+  btn.disabled = false;
+  btn.textContent = "Split PDF";
+
+  const fileName = `split-pages-${pages.length}.zip`;
+  downloadLink.href = URL.createObjectURL(zipBlob);
+  downloadLink.download = fileName;
+  downloadLink.textContent = `⬇ Download ${fileName}`;
+  downloadLink.style.display = "block";
+
+  statusEl.textContent = "ZIP ready. Tap download.";
+  progressEl.textContent = "Your file is ready.";
+};
 </script>
+
 </body>
 </html>
