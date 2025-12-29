@@ -1,207 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>akashworldwide.docs</title>
+  <meta charset="UTF-8" />
+  <title>PDF Tools | akashworldwide</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Google Font (Tech / Sci-Fi feel) -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
 
-<style>
-:root{
-  --bg:#050914;
-  --card:#0b1226;
-  --border:#1c2a4a;
-  --accent:#4fc3f7;
-  --text:#e6f1ff;
-  --muted:#9bb0d3;
-}
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Poppins,sans-serif;
-}
+  <style>
+    :root {
+      --bg: #070b14;
+      --card: #0e1526;
+      --neon-blue: #00eaff;
+      --neon-purple: #8b5cf6;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+    }
 
-/* ---------- BACKGROUND ---------- */
-.bg-animate{
-  position:fixed;
-  inset:0;
-  z-index:-2;
-  background:linear-gradient(120deg,#050914,#0c1a3a,#050914);
-  overflow:hidden;
-}
-.float-text{
-  position:absolute;
-  color:rgba(79,195,247,.12);
-  white-space:nowrap;
-  font-size:14px;
-  animation:floatUp linear infinite;
-}
-@keyframes floatUp{
-  from{transform:translateY(110vh)}
-  to{transform:translateY(-120vh)}
-}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
 
-/* ---------- BODY ---------- */
-body{
-  min-height:100vh;
-  color:var(--text);
-}
+    body {
+      background: radial-gradient(circle at top, #0b1220, #05070d);
+      color: var(--text);
+      min-height: 100vh;
+    }
 
-/* ---------- HEADER ---------- */
-header{
-  padding:46px 20px 32px;
-  text-align:center;
-}
-header h1{
-  font-size:clamp(1.6rem,5.5vw,2.4rem);
-  font-weight:700;
-  color:var(--accent);
-}
-header p{
-  margin-top:14px;
-  max-width:760px;
-  margin-inline:auto;
-  font-size:.95rem;
-  color:var(--muted);
-  line-height:1.6;
-}
+    /* ---------- HEADER ---------- */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 20px;
+      border-bottom: 1px solid rgba(0,234,255,0.2);
+      backdrop-filter: blur(8px);
+    }
 
-/* ---------- NOTICE ---------- */
-.notice{
-  max-width:860px;
-  margin:0 auto 26px;
-  padding:12px 16px;
-  background:#0b1735;
-  border:1px solid var(--border);
-  border-radius:12px;
-  font-size:.85rem;
-  color:#b6c7ee;
-  text-align:center;
-}
+    header h1 {
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+      color: var(--neon-blue);
+      text-shadow: 0 0 12px rgba(0,234,255,0.6);
+    }
 
-/* ---------- GRID ---------- */
-.grid{
-  max-width:1150px;
-  margin:30px auto 70px;
-  padding:0 20px;
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-  gap:22px;
-}
-.card{
-  background:linear-gradient(180deg,#0d1738,#090f26);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:26px;
-  text-align:center;
-  transition:.35s ease;
-}
-.card:hover{
-  transform:translateY(-8px);
-  border-color:var(--accent);
-  box-shadow:0 18px 45px rgba(79,195,247,.18);
-}
-.card h3{
-  color:var(--accent);
-  margin-bottom:8px;
-  font-size:1.1rem;
-}
-.card p{
-  color:var(--muted);
-  font-size:.88rem;
-}
-a{text-decoration:none;color:inherit}
+    header a {
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 14px;
+      border: 1px solid var(--neon-purple);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      transition: 0.3s;
+    }
 
-/* ---------- FOOTER ---------- */
-footer{
-  border-top:1px solid var(--border);
-  padding:26px 15px 30px;
-  text-align:center;
-  font-size:.85rem;
-  color:#7fa1d6;
-}
-footer a{
-  color:var(--accent);
-  font-weight:600;
-  text-decoration:none;
-}
-.github{
-  margin-top:10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  color:#9bb0d3;
-  font-size:.8rem;
-}
-.github img{width:16px;height:16px}
-</style>
+    header a:hover {
+      background: var(--neon-purple);
+      box-shadow: 0 0 15px rgba(139,92,246,0.8);
+    }
+
+    /* ---------- HERO ---------- */
+    .hero {
+      text-align: center;
+      padding: 50px 20px 30px;
+    }
+
+    .hero h2 {
+      font-size: 1.8rem;
+      color: #fff;
+      text-shadow: 0 0 18px rgba(0,234,255,0.5);
+    }
+
+    .hero p {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      max-width: 600px;
+      margin-inline: auto;
+    }
+
+    /* ---------- TOOLS GRID ---------- */
+    .tools {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 22px;
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .card {
+      background: linear-gradient(180deg, #0e1526, #0a1020);
+      border: 1px solid rgba(0,234,255,0.25);
+      clip-path: polygon(0 0, 92% 0, 100% 12%, 100% 100%, 8% 100%, 0 88%);
+      padding: 22px;
+      position: relative;
+      transition: 0.35s;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border: 1px solid rgba(139,92,246,0.4);
+      clip-path: polygon(0 0, 92% 0, 100% 12%, 100% 100%, 8% 100%, 0 88%);
+      opacity: 0;
+      transition: 0.35s;
+    }
+
+    .card:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 0 30px rgba(0,234,255,0.25);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: var(--neon-blue);
+    }
+
+    .card p {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .actions a {
+      flex: 1;
+      text-align: center;
+      padding: 8px 0;
+      font-size: 0.7rem;
+      text-decoration: none;
+      color: #fff;
+      border: 1px solid var(--neon-blue);
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    .actions a:hover {
+      background: var(--neon-blue);
+      color: #000;
+      box-shadow: 0 0 14px rgba(0,234,255,0.8);
+    }
+
+    /* ---------- FOOTER ---------- */
+    footer {
+      margin-top: 40px;
+      padding: 22px 15px;
+      text-align: center;
+      border-top: 1px solid rgba(139,92,246,0.3);
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    footer span {
+      color: var(--neon-blue);
+    }
+
+    footer img {
+      width: 16px;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+  </style>
 </head>
-
 <body>
 
-<!-- Animated Background -->
-<div class="bg-animate" id="bg"></div>
+  <!-- HEADER -->
+  <header>
+    <h1>PDF TOOLS</h1>
+    <a href="https://github.com/" target="_blank">GitHub</a>
+  </header>
 
-<header>
-  <h1>akashworldwide.docs</h1>
-  <p>Free • Fast • Privacy-first document tools with bank-level security</p>
-</header>
+  <!-- HERO -->
+  <section class="hero">
+    <h2>All-in-One PDF Toolkit</h2>
+    <p>Fast • Free • Privacy-First • 100% Browser-Based  
+       No uploads. No servers. Just pure power.</p>
+  </section>
 
-<div class="notice">
-  🔒 All files are processed locally in your browser.
-  ⬇ Downloads start only when you click the <b>Download</b> button.
-</div>
+  <!-- TOOLS -->
+  <section class="tools">
 
-<section class="grid">
+    <!-- CARD TEMPLATE -->
+    <div class="card">
+      <h3>Merge PDF</h3>
+      <p>Combine multiple PDF files into one document.</p>
+      <div class="actions">
+        <a href="merge-pdf.html">OPEN</a>
+        <a href="merge-pdf.html">EXPLORE</a>
+      </div>
+    </div>
 
-<a href="merge-pdf.html"><div class="card"><h3>Merge PDF</h3><p>Combine multiple PDFs into one</p></div></a>
-<a href="split-pdf.html"><div class="card"><h3>Split PDF</h3><p>Split PDF into individual pages</p></div></a>
-<a href="compress-pdf.html"><div class="card"><h3>Compress PDF</h3><p>Reduce PDF file size</p></div></a>
-<a href="reorder-pdf.html"><div class="card"><h3>Reorder PDF</h3><p>Change PDF page order</p></div></a>
-<a href="delete-pdf-pages.html"><div class="card"><h3>Delete PDF Pages</h3><p>Remove unwanted pages</p></div></a>
+    <div class="card">
+      <h3>Compress PDF</h3>
+      <p>Reduce PDF size without quality loss.</p>
+      <div class="actions">
+        <a href="compress-pdf.html">OPEN</a>
+        <a href="compress-pdf.html">EXPLORE</a>
+      </div>
+    </div>
 
-<a href="pdf-to-jpg.html"><div class="card"><h3>PDF to JPG</h3><p>Convert PDF pages to images</p></div></a>
-<a href="jpg-to-pdf.html"><div class="card"><h3>JPG to PDF</h3><p>Convert images into a PDF</p></div></a>
-<a href="pdf-to-text.html"><div class="card"><h3>PDF to Text</h3><p>Extract text from PDF</p></div></a>
-<a href="text-to-pdf.html"><div class="card"><h3>Text to PDF</h3><p>Create PDF from text</p></div></a>
+    <div class="card">
+      <h3>Split PDF</h3>
+      <p>Split PDF into individual pages.</p>
+      <div class="actions">
+        <a href="split-pdf.html">OPEN</a>
+        <a href="split-pdf.html">EXPLORE</a>
+      </div>
+    </div>
 
-<a href="protect-pdf.html"><div class="card"><h3>Protect PDF</h3><p>Add password protection</p></div></a>
-<a href="unlock-pdf.html"><div class="card"><h3>Unlock PDF</h3><p>Remove PDF password</p></div></a>
-<a href="watermark-pdf.html"><div class="card"><h3>PDF Watermark</h3><p>Add text watermark</p></div></a>
-<a href="pdf-metadata.html"><div class="card"><h3>PDF Metadata Editor</h3><p>Edit PDF information</p></div></a>
+    <div class="card">
+      <h3>JPG to PDF</h3>
+      <p>Convert images into PDF files.</p>
+      <div class="actions">
+        <a href="jpg-to-pdf.html">OPEN</a>
+        <a href="jpg-to-pdf.html">EXPLORE</a>
+      </div>
+    </div>
 
-</section>
+    <div class="card">
+      <h3>PDF to JPG</h3>
+      <p>Extract images from PDF pages.</p>
+      <div class="actions">
+        <a href="pdf-to-jpg.html">OPEN</a>
+        <a href="pdf-to-jpg.html">EXPLORE</a>
+      </div>
+    </div>
 
-<footer>
-  Developed by
-  <a href="https://www.akashworldwide.in" target="_blank">akashworldwide</a>
+    <div class="card">
+      <h3>Protect PDF</h3>
+      <p>Add password protection to PDFs.</p>
+      <div class="actions">
+        <a href="protect-pdf.html">OPEN</a>
+        <a href="protect-pdf.html">EXPLORE</a>
+      </div>
+    </div>
 
-  <div class="github">
-    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
+    <div class="card">
+      <h3>Unlock PDF</h3>
+      <p>Remove password from secured PDFs.</p>
+      <div class="actions">
+        <a href="unlock-pdf.html">OPEN</a>
+        <a href="unlock-pdf.html">EXPLORE</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Watermark PDF</h3>
+      <p>Add custom watermark to documents.</p>
+      <div class="actions">
+        <a href="watermark-pdf.html">OPEN</a>
+        <a href="watermark-pdf.html">EXPLORE</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>PDF to Text</h3>
+      <p>Extract raw text from PDFs.</p>
+      <div class="actions">
+        <a href="pdf-to-text.html">OPEN</a>
+        <a href="pdf-to-text.html">EXPLORE</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Text to PDF</h3>
+      <p>Convert text files into PDFs.</p>
+      <div class="actions">
+        <a href="text-to-pdf.html">OPEN</a>
+        <a href="text-to-pdf.html">EXPLORE</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>PDF Metadata</h3>
+      <p>Edit and view PDF metadata.</p>
+      <div class="actions">
+        <a href="pdf-metadata.html">OPEN</a>
+        <a href="pdf-metadata.html">EXPLORE</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Reorder Pages</h3>
+      <p>Change PDF page order easily.</p>
+      <div class="actions">
+        <a href="reorder-pdf.html">OPEN</a>
+        <a href="reorder-pdf.html">EXPLORE</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Delete Pages</h3>
+      <p>Remove unwanted pages from PDF.</p>
+      <div class="actions">
+        <a href="delete-pdf-pages.html">OPEN</a>
+        <a href="delete-pdf-pages.html">EXPLORE</a>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    Developed by <span>akashworldwide</span><br>
     Powered by GitHub
-  </div>
-</footer>
-
-<!-- Floating Text Script -->
-<script>
-const words=[
- "PDF","SECURE","CLIENT-SIDE","ENCRYPTED","MERGE","SPLIT",
- "CONVERT","PRIVACY","TEXT","METADATA","WATERMARK","DOCS"
-];
-const bg=document.getElementById("bg");
-for(let i=0;i<30;i++){
- const s=document.createElement("span");
- s.className="float-text";
- s.textContent=words[Math.floor(Math.random()*words.length)];
- s.style.left=Math.random()*100+"%";
- s.style.animationDuration=(18+Math.random()*20)+"s";
- s.style.fontSize=(12+Math.random()*10)+"px";
- bg.appendChild(s);
-}
-</script>
+    <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
+  </footer>
 
 </body>
 </html>
