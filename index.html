@@ -25,7 +25,7 @@ body{
   color:var(--text);
 }
 
-/* HEADER FIXED */
+/* HEADER */
 header{
   text-align:center;
   padding:22px 15px;
@@ -88,7 +88,8 @@ header h1{
   color:var(--neon);
   margin-bottom:15px;
 }
-.tool-box input, .tool-box button{
+.tool-box input,
+.tool-box button{
   width:100%;
   margin-top:12px;
   padding:10px;
@@ -107,6 +108,13 @@ footer{
   border-top:1px solid rgba(139,92,246,.3);
 }
 footer span{color:var(--neon)}
+footer img{
+  width:16px;
+  height:16px;
+  vertical-align:middle;
+  margin-left:6px;
+  filter:drop-shadow(0 0 4px rgba(0,245,255,.6));
+}
 </style>
 </head>
 <body>
@@ -121,7 +129,7 @@ footer span{color:var(--neon)}
   <div class="card"><h3>Merge PDF</h3><p>Combine PDFs</p><button onclick="openTool('merge')">OPEN</button></div>
   <div class="card"><h3>Split PDF</h3><p>Split pages</p><button onclick="openTool('split')">OPEN</button></div>
   <div class="card"><h3>Delete Pages</h3><p>Remove pages</p><button onclick="openTool('delete')">OPEN</button></div>
-  <div class="card"><h3>Reorder Pages</h3><p>Change page order</p><button onclick="openTool('reorder')">OPEN</button></div>
+  <div class="card"><h3>Reorder Pages</h3><p>Change order</p><button onclick="openTool('reorder')">OPEN</button></div>
   <div class="card"><h3>Protect PDF</h3><p>Add password</p><button onclick="openTool('protect')">OPEN</button></div>
   <div class="card"><h3>Unlock PDF</h3><p>Remove password</p><button onclick="openTool('unlock')">OPEN</button></div>
   <div class="card"><h3>Watermark PDF</h3><p>Add watermark</p><button onclick="openTool('watermark')">OPEN</button></div>
@@ -142,6 +150,7 @@ footer span{color:var(--neon)}
 <footer>
   Developed by <span>akashworldwide</span><br>
   Powered by GitHub
+  <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
 </footer>
 
 <script>
