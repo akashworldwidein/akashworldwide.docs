@@ -38,12 +38,15 @@ button{
   background:#4fc3f7;color:#020617;
   border:none;border-radius:12px;font-weight:600;cursor:pointer
 }
+button:disabled{opacity:.7;cursor:not-allowed}
 .loader{
   display:none;margin:14px auto;width:36px;height:36px;
   border:4px solid #1c2a4a;border-top:4px solid #4fc3f7;
   border-radius:50%;animation:spin 1s linear infinite
 }
 @keyframes spin{to{transform:rotate(360deg)}}
+.status{margin-top:10px;font-size:.9rem;color:#9bb0d3}
+.progress{margin-top:6px;font-size:.85rem;color:#7fa1d6}
 </style>
 </head>
 
@@ -62,8 +65,11 @@ button{
 
 <div class="preview" id="preview"></div>
 
-<button onclick="splitPDF()">Split & Download ZIP</button>
+<button id="splitBtn" onclick="splitPDF()">Split & Download ZIP</button>
 <div class="loader" id="loader"></div>
+
+<div class="status" id="status"></div>
+<div class="progress" id="progress"></div>
 
 </div>
 
@@ -74,6 +80,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 const pdfInput = document.getElementById("pdf");
 const preview = document.getElementById("preview");
 const loader = document.getElementById("loader");
+const statusEl = document.getElementById("status");
+const progressEl = document.getElementById("progress");
+const btn = document.getElementById("splitBtn");
 
 let pdfBytes=null, pageCount=0;
 
@@ -81,6 +90,8 @@ pdfInput.onchange = async ()=>{
   const file=pdfInput.files[0];
   if(!file)return;
   preview.innerHTML="";
+  statusEl.textContent="";
+  progressEl.textContent="";
   pdfBytes=await file.arrayBuffer();
   const pdf=await pdfjsLib.getDocument({data:pdfBytes}).promise;
   pageCount=pdf.numPages;
@@ -110,29 +121,46 @@ function parsePages(input,max){
 
 async function splitPDF(){
   if(!pdfBytes){alert("Choose a PDF first");return;}
+
   const pages=parsePages(document.getElementById("pages").value,pageCount);
   if(!pages.length){alert("Invalid page numbers");return;}
 
+  btn.disabled=true;
+  btn.textContent="Processing…";
   loader.style.display="block";
+  statusEl.textContent="Preparing pages…";
+  progressEl.textContent="";
 
   const src=await PDFLib.PDFDocument.load(pdfBytes);
   const zip=new JSZip();
 
+  let done=0;
   for(const i of pages){
     const out=await PDFLib.PDFDocument.create();
     const [p]=await out.copyPages(src,[i]);
     out.addPage(p);
     const bytes=await out.save();
     zip.file(`page-${i+1}.pdf`,bytes);
+
+    done++;
+    progressEl.textContent=`Added ${done} of ${pages.length} pages`;
   }
 
+  statusEl.textContent="Creating ZIP file…";
   const zipBlob=await zip.generateAsync({type:"blob"});
-  loader.style.display="none";
 
+  loader.style.display="none";
+  btn.disabled=false;
+  btn.textContent="Split & Download ZIP";
+
+  const fileName=`split-pages-${pages.length}.zip`;
   const a=document.createElement("a");
   a.href=URL.createObjectURL(zipBlob);
-  a.download="split-pages.zip";
+  a.download=fileName;
   a.click();
+
+  statusEl.innerHTML=`✅ <strong>Download started</strong><br>File: <code>${fileName}</code>`;
+  progressEl.textContent="Check your browser downloads";
 }
 </script>
 </body>
