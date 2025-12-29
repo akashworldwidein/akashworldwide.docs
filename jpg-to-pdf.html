@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JPG to PDF | akashworldwide.docs</title>
+
+  <!-- jsPDF CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; font-family: Arial, Helvetica, sans-serif; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      background: #020617;
+      border: 1px solid #1e293b;
+      padding: 30px;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #38bdf8;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #cbd5f5;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      width: 100%;
+      padding: 12px;
+      background: #020617;
+      border: 1px dashed #38bdf8;
+      border-radius: 10px;
+      color: #cbd5f5;
+      margin-bottom: 20px;
+      cursor: pointer;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #38bdf8;
+      color: #020617;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    footer {
+      margin-top: 18px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>JPG to PDF</h1>
+    <p>Convert one or multiple JPG images into a single PDF file.</p>
+
+    <input type="file" id="images" accept="image/jpeg,image/png" multiple />
+
+    <button onclick="convertToPDF()">Convert & Download</button>
+
+    <footer>
+      Developed by <strong>akashworldwide</strong>
+    </footer>
+  </div>
+
+  <script>
+    async function convertToPDF() {
+      const files = document.getElementById("images").files;
+
+      if (!files.length) {
+        alert("Please select at least one image.");
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF();
+
+      for (let i = 0; i < files.length; i++) {
+        const imgData = await readImage(files[i]);
+
+        const img = new Image();
+        img.src = imgData;
+
+        await new Promise(resolve => img.onload = resolve);
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = (img.height * pageWidth) / img.width;
+
+        if (i > 0) pdf.addPage();
+        pdf.addImage(img, "JPEG", 0, 0, pageWidth, pageHeight);
+      }
+
+      pdf.save("images.pdf");
+    }
+
+    function readImage(file) {
+      return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.readAsDataURL(file);
+      });
+    }
+  </script>
+
+</body>
+</html>
