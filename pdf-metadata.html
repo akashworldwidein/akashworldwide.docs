@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PDF Metadata | akashworldwide.docs</title>
+<script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<style>
+body{background:#050914;color:#e6f1ff;font-family:Poppins,sans-serif;
+display:flex;justify-content:center;align-items:center;min-height:100vh}
+.card{background:#0b1226;border:1px solid #1c2a4a;border-radius:16px;
+padding:22px;width:100%;max-width:420px}
+input,button{width:100%;padding:10px;margin-top:10px;border-radius:8px}
+button{background:#4fc3f7;border:none;font-weight:600}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>PDF Metadata Editor</h2>
+<input type="file" id="pdf">
+<input id="title" placeholder="Title">
+<input id="author" placeholder="Author">
+<input id="subject" placeholder="Subject">
+<button onclick="edit()">Save & Download</button>
+</div>
+
+<script>
+async function edit(){
+ const f=document.getElementById("pdf").files[0];
+ const b=await f.arrayBuffer();
+ const pdf=await PDFLib.PDFDocument.load(b);
+ pdf.setTitle(title.value);
+ pdf.setAuthor(author.value);
+ pdf.setSubject(subject.value);
+ const out=await pdf.save();
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([out],{type:"application/pdf"}));
+ a.download="metadata.pdf";a.click();
+}
+</script>
+</body>
+</html>
