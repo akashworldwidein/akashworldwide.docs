@@ -7,6 +7,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <style>
 :root{
@@ -19,31 +20,35 @@
 }
 *{box-sizing:border-box;font-family:'Poppins',sans-serif}
 body{
-  margin:0;min-height:100vh;
+  margin:0;
+  min-height:100vh;
   background:radial-gradient(circle at top,#0c1a3a,#050914 60%);
   color:var(--text);
-  display:flex;align-items:center;justify-content:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 .card{
-  width:100%;max-width:440px;
+  width:100%;
+  max-width:480px;
   background:linear-gradient(180deg,#0d1738,#090f26);
   border:1px solid var(--border);
   border-radius:18px;
-  padding:30px 26px;
+  padding:28px;
   text-align:center;
 }
 a{color:var(--accent);text-decoration:none;font-size:.85rem}
-h1{margin:12px 0 6px;font-size:1.5rem;color:var(--accent)}
-p{margin-bottom:22px;font-size:.9rem;color:var(--muted)}
+h1{margin:12px 0 6px;color:var(--accent)}
+p{font-size:.9rem;color:var(--muted)}
 
 .upload{
   border:2px dashed var(--accent);
   border-radius:14px;
-  padding:16px;
-  margin-bottom:16px;
+  padding:14px;
+  margin:16px 0;
 }
 label{
-  background:#ffffff;
+  background:#fff;
   color:#000;
   padding:8px 14px;
   border-radius:6px;
@@ -55,13 +60,35 @@ label{
   margin-top:8px;
   font-size:.8rem;
   color:var(--muted);
-  word-break:break-all;
 }
 input[type=file]{display:none}
 
+input[type=text]{
+  width:100%;
+  margin-top:10px;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:#020617;
+  color:var(--text);
+  font-size:.85rem;
+}
+
+.preview{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(80px,1fr));
+  gap:10px;
+  margin-top:16px;
+}
+.preview canvas{
+  width:100%;
+  border-radius:6px;
+  border:1px solid var(--border);
+}
+
 button{
   width:100%;
-  margin-top:12px;
+  margin-top:14px;
   padding:12px;
   border:none;
   border-radius:12px;
@@ -82,14 +109,8 @@ button{
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-.status{
-  margin-top:12px;
-  font-size:.85rem;
-  color:#9bb0d3;
-}
-
 footer{
-  margin-top:18px;
+  margin-top:16px;
   font-size:.75rem;
   color:#7fa1d6;
 }
@@ -110,53 +131,98 @@ footer{
   <input type="file" id="pdfFile" accept="application/pdf">
 </div>
 
-<button onclick="splitPDF()">Split & Download</button>
+<input type="text" id="pageInput" placeholder="Pages (e.g. 1-3,5,7)">
+
+<div class="preview" id="preview"></div>
+
+<button onclick="splitPDF()">Split PDF</button>
 
 <div class="loader" id="loader"></div>
-<div class="status" id="status"></div>
 
 <footer>Developed by <strong>akashworldwide</strong></footer>
 </div>
 
 <script>
-const input = document.getElementById("pdfFile");
-const fileName = document.getElementById("fileName");
-const loader = document.getElementById("loader");
-const status = document.getElementById("status");
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+"https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 
-input.onchange = () => {
-  fileName.textContent = input.files[0]?.name || "No file chosen";
+const fileInput = document.getElementById("pdfFile");
+const fileName = document.getElementById("fileName");
+const preview = document.getElementById("preview");
+const loader = document.getElementById("loader");
+
+let loadedPdf = null;
+
+fileInput.onchange = async () => {
+  const file = fileInput.files[0];
+  if(!file) return;
+  fileName.textContent = file.name;
+  preview.innerHTML = "";
+
+  const pdf = await pdfjsLib.getDocument({data: await file.arrayBuffer()}).promise;
+  loadedPdf = pdf;
+
+  for(let i=1;i<=pdf.numPages;i++){
+    const page = await pdf.getPage(i);
+    const viewport = page.getViewport({scale:0.3});
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    await page.render({canvasContext:ctx,viewport}).promise;
+    preview.appendChild(canvas);
+  }
 };
 
+function parsePages(input, max){
+  const pages = new Set();
+  input.split(",").forEach(p=>{
+    if(p.includes("-")){
+      let [s,e]=p.split("-").map(Number);
+      for(let i=s;i<=e;i++) if(i>=1&&i<=max) pages.add(i-1);
+    }else{
+      let n=Number(p);
+      if(n>=1&&n<=max) pages.add(n-1);
+    }
+  });
+  return [...pages];
+}
+
 async function splitPDF(){
-  if(!input.files.length){
-    alert("Please choose a PDF file.");
+  if(!fileInput.files.length){
+    alert("Please choose a PDF file");
     return;
   }
 
-  loader.style.display = "block";
-  status.textContent = "Processing pages…";
+  const pagesToSplit = parsePages(
+    document.getElementById("pageInput").value,
+    loadedPdf.numPages
+  );
 
-  const file = input.files[0];
-  const srcPdf = await PDFLib.PDFDocument.load(await file.arrayBuffer());
-  const totalPages = srcPdf.getPageCount();
+  if(!pagesToSplit.length){
+    alert("Please enter valid page numbers");
+    return;
+  }
 
-  for(let i=0;i<totalPages;i++){
+  loader.style.display="block";
+
+  const srcPdf = await PDFLib.PDFDocument.load(
+    await fileInput.files[0].arrayBuffer()
+  );
+
+  for(const i of pagesToSplit){
     const newPdf = await PDFLib.PDFDocument.create();
     const [page] = await newPdf.copyPages(srcPdf,[i]);
     newPdf.addPage(page);
 
-    const bytes = await newPdf.save();
-    const blob = new Blob([bytes],{type:"application/pdf"});
-
+    const blob = new Blob([await newPdf.save()],{type:"application/pdf"});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `page-${i+1}.pdf`;
     a.click();
   }
 
-  loader.style.display = "none";
-  status.textContent = `Done! ${totalPages} pages downloaded.`;
+  loader.style.display="none";
 }
 </script>
 
