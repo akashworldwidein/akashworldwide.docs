@@ -8,7 +8,7 @@
 <!-- Font -->
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
 
-<!-- PDF-LIB (STABLE CDN) -->
+<!-- PDF-LIB -->
 <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
 
 <style>
@@ -19,9 +19,19 @@
   --neon:#00f5ff;
   --text:#e5e7eb;
   --muted:#9ca3af;
+  --ok:#22c55e;
+  --err:#ef4444;
 }
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',sans-serif}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Orbitron',sans-serif
+}
+
 body{
+  min-height:100vh;
   background:radial-gradient(circle at top,var(--bg2),var(--bg));
   color:var(--text);
 }
@@ -29,13 +39,13 @@ body{
 /* HEADER */
 header{
   text-align:center;
-  padding:20px;
-  border-bottom:2px solid rgba(0,245,255,.6);
+  padding:22px;
+  border-bottom:2px solid rgba(0,245,255,.5);
 }
 header h1{
   color:var(--neon);
   letter-spacing:2px;
-  text-shadow:0 0 12px rgba(0,245,255,.7);
+  text-shadow:0 0 14px rgba(0,245,255,.8);
 }
 
 /* TOOL BOX */
@@ -44,49 +54,81 @@ header h1{
   margin:50px auto;
   background:var(--card);
   padding:30px;
-  border:1px solid rgba(0,245,255,.3);
-}
-h2{text-align:center;color:var(--neon);margin-bottom:12px}
-p{text-align:center;font-size:.75rem;color:var(--muted);margin-bottom:20px}
-
-input{
-  width:100%;
-  padding:12px;
-  background:transparent;
-  border:1px dashed var(--neon);
-  color:#fff;
+  border:1px solid rgba(0,245,255,.35);
 }
 
+/* TEXT */
+h2{
+  text-align:center;
+  color:var(--neon);
+  margin-bottom:10px;
+}
+p{
+  text-align:center;
+  font-size:.75rem;
+  color:var(--muted);
+  margin-bottom:22px;
+}
+
+/* DROP ZONE */
+.drop{
+  border:2px dashed var(--neon);
+  padding:22px;
+  text-align:center;
+  cursor:pointer;
+  transition:.2s;
+}
+.drop:hover{
+  background:rgba(0,245,255,.06);
+}
+.drop small{
+  display:block;
+  font-size:.7rem;
+  color:var(--muted);
+  margin-top:6px;
+}
+
+input{display:none}
+
+/* BUTTON */
 button{
   width:100%;
-  margin-top:16px;
-  padding:12px;
+  margin-top:18px;
+  padding:14px;
   background:transparent;
   border:1px solid var(--neon);
   color:#fff;
   cursor:pointer;
+  transition:.2s;
 }
-button:hover{background:var(--neon);color:#000}
+button:hover{
+  background:var(--neon);
+  color:#000;
+}
 
+/* STATUS */
 .status{
-  margin-top:20px;
+  margin-top:22px;
   font-size:.75rem;
   text-align:center;
   color:var(--muted);
 }
+.status.ok{color:var(--ok)}
+.status.err{color:var(--err)}
 
 /* FOOTER */
 footer{
   text-align:center;
-  margin-top:50px;
+  margin-top:60px;
   padding:20px;
   font-size:.65rem;
   color:var(--muted);
-  border-top:1px solid rgba(139,92,246,.3);
+  border-top:1px solid rgba(0,245,255,.25);
 }
 footer span{color:var(--neon)}
 </style>
 </head>
+
 <body>
 
 <header>
@@ -95,13 +137,18 @@ footer span{color:var(--neon)}
 
 <div class="box">
   <h2>Compress PDF</h2>
-  <p>File stays on your device. No upload. No tracking.</p>
+  <p>All processing happens in your browser. Files never leave your device.</p>
 
-  <input type="file" id="pdfFile" accept="application/pdf">
+  <label class="drop" id="dropBox">
+    Click or drop PDF here
+    <small>Only .pdf supported</small>
+    <input type="file" id="pdfFile" accept="application/pdf">
+  </label>
+
   <button id="compressBtn">COMPRESS & DOWNLOAD</button>
 
   <div class="status" id="statusText">
-    Select a PDF file to start
+    Waiting for PDF…
   </div>
 </div>
 
@@ -111,54 +158,81 @@ footer span{color:var(--neon)}
 </footer>
 
 <script>
+const input = document.getElementById("pdfFile");
+const drop = document.getElementById("dropBox");
 const btn = document.getElementById("compressBtn");
 const status = document.getElementById("statusText");
 
-btn.addEventListener("click", async () => {
-  try {
-    const input = document.getElementById("pdfFile");
+/* CLICK OPEN */
+drop.onclick = () => input.click();
 
-    if (!input.files.length) {
-      status.textContent = "❌ Please select a PDF file first";
+/* DRAG DROP */
+drop.ondragover = e => {
+  e.preventDefault();
+  drop.style.background = "rgba(0,245,255,.12)";
+};
+drop.ondragleave = () => drop.style.background = "transparent";
+drop.ondrop = e => {
+  e.preventDefault();
+  drop.style.background = "transparent";
+  input.files = e.dataTransfer.files;
+  showFile();
+};
+
+input.onchange = showFile;
+
+function showFile(){
+  if(input.files.length){
+    status.textContent = "Selected: " + input.files[0].name;
+    status.className = "status";
+  }
+}
+
+/* COMPRESS */
+btn.onclick = async () => {
+  try{
+    if(!input.files.length){
+      status.textContent = "❌ Please select a PDF first";
+      status.className = "status err";
       return;
     }
 
     const file = input.files[0];
-    const originalSize = (file.size / 1024 / 1024).toFixed(2);
+    const originalMB = (file.size/1024/1024).toFixed(2);
 
-    status.textContent = "⏳ Compressing PDF… please wait";
+    status.textContent = "⏳ Compressing…";
+    status.className = "status";
 
     const buffer = await file.arrayBuffer();
-    const pdfDoc = await PDFLib.PDFDocument.load(buffer);
+    const pdf = await PDFLib.PDFDocument.load(buffer);
 
-    const compressedBytes = await pdfDoc.save({
-      useObjectStreams: true
+    // Safe browser-level optimization
+    const bytes = await pdf.save({
+      useObjectStreams:true,
+      addDefaultPage:false
     });
 
-    const blob = new Blob([compressedBytes], {
-      type: "application/pdf"
-    });
+    const blob = new Blob([bytes],{type:"application/pdf"});
+    const newMB = (blob.size/1024/1024).toFixed(2);
 
-    const newSize = (blob.size / 1024 / 1024).toFixed(2);
-
-    const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url;
-    a.download = file.name.replace(".pdf", "-compressed.pdf");
-    document.body.appendChild(a);
+    a.href = URL.createObjectURL(blob);
+    a.download = file.name.replace(/\.pdf$/i,"-compressed.pdf");
     a.click();
-    a.remove();
 
     status.innerHTML = `
-      ✅ Download started<br><br>
-      Original: <b>${originalSize} MB</b><br>
-      Compressed: <b>${newSize} MB</b>
+      ✅ Done<br><br>
+      Original: <b>${originalMB} MB</b><br>
+      New: <b>${newMB} MB</b>
     `;
-  } catch (err) {
+    status.className = "status ok";
+
+  }catch(err){
     console.error(err);
-    status.textContent = "❌ Failed to compress PDF (unsupported file)";
+    status.textContent = "❌ Compression failed (file not supported)";
+    status.className = "status err";
   }
-});
+};
 </script>
 
 </body>
